@@ -1,0 +1,446 @@
+%&latexf
+\documentclass[[11pt,twoside,a4paper]{article}
+\usepackage{color}
+\setlength{\hoffset}{-0.5in}\hoffset-0.5in
+\setlength{\textwidth}{15cm}
+\usepackage{hyperref}
+\usepackage{amsmath, amsfonts, amsthm, amssymb}
+\usepackage{verbatim}
+\usepackage{stmaryrd}
+\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage[dvips]{graphicx}
+\usepackage{subfigure}
+\linespread{1.6}
+%\font\twelvemsb=msbm10 at 12pt
+\newfam\msbfam
+%\textfont\msbfam=\twelvemsb
+\def\Bbb#1{\fam\msbfam\relax#1}
+
+\topmargin = 20pt
+\voffset = -20pt
+\addtolength{\textheight}{2cm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{exa}{Example}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\newcommand{\ind}{1\hspace{-2.1mm}{1}} %Indicator Function
+\newcommand{\I}{\mathtt{i}}
+\newcommand{\D}{\mathrm{d}}
+\newcommand{\F}{\mathrm{F}}
+\newcommand{\E}{\mathrm{e}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\atanh}{\mathrm{arctanh}}
+\def\equalDistrib{\,{\buildrel \Delta \over =}\,}
+\numberwithin{equation}{section}
+\def\blue#1{\textcolor{blue}{#1}}
+\def\red#1{\textcolor{red}{#1}}
+
+
+
+\begin{document}
+%The following commands include several pages which contain the front page, acknowledgements,...
+%\include{ThesisFrontPage}
+%\include{ThesisAcknowledgements}
+
+%%%
+\setcounter{tocdepth}{4}
+%%%
+
+\tableofcontents %% This includes the table of contents, which is organised automatically, 
+ %% and used your section / subsection.
+ 
+\newpage %%This simply means that the next part of text will start on a new page.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fancyhead{}
+\fancyfoot{}
+\pagestyle{fancy} 
+\fancyhead[RO,LE]{\sffamily\small \thepage}
+\fancyhead[LO,RE]{\sffamily\small \nouppercase{\rightmark}}
+\renewcommand{\headrulewidth}{0.35pt}
+\renewcommand{\footrulewidth}{0.0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\subsection{General Introduction}
+
+\subsection{CDS,CDO and Synthetic CDO}
+
+\subsubsection{Traditional pricing models}
+
+\subsubsection{Machine Learning for pricing -- Gaussian Process Regression}
+
+%\begin{remark}
+%This section will be extended later.
+%\end{remark}
+\newpage
+\section{Gaussian Process}
+
+There are broadly two common approaches when it comes to supervised machine learning. One is to assume a specific class of functions that we want to learn, then train the model to learn the parameters that describe the specific function. The other approach is to assign a prior probability to all the possible functions, then choose the one that maximise the likelihood of training data. The first approach has a problem that we have to decide the richness of the class of functions we are trying to learn for each specific task. But sometimes, the target function that we aim to learn ends up in a totally different class of functions from our estimation. For instance, we may instantiate a linear function estimator for a highly non-linear target. In this case, the result we get from our prediction when evaluate at new data will inevitably be subprime or sometimes, very poor. The second approach seems to be intractable in the sense that there are just too many functions that we can assign probability to. This is where Gaussian Process can be of great use. In this section, we first define Gaussian processes, then show how they can be used to tackle the regression problem. 
+
+\subsection{Introduction to Gaussian Process}
+
+\begin{definition}(Gaussian Process)
+	A $Gaussian$ process $\{X_i\}_{i\in \mathcal{I}}$ indexed by an index set $\mathcal{I}$ is a family of random variables $X_i$'s, all defined on the same probability space, such that any finite subset $\mathcal{F}\subset\mathcal{I}$ the random vector $X_{\mathcal{F}} := \{X_i\}_{i\in \mathcal{F}}$ has a multivariate Gaussian distribution.\cite[Lalley]{Lalley}
+\end{definition}
+
+Because of their nice analytical tractability, it is convenient to model finite collection of real-valued functions using  multivariate Gaussian distribution. In practice, we can think of a Gaussian Process as a very long multivariate gaussian vector indexed by some index space (e.g. time, space, hyperspace...). The data we use to train our model will be some dimensions of this vector that we have observed, and we want to make prediction of dimensions that we don't know. 
+
+Before we observe any values from a Gaussian Process, we only have a $prior$ distribution over functions specified by that Gaussian Process which may include all the continuous functions. Once we have observed some data points, the possible functions are now reduced to those that go through our observed points. Because of the multivariate gaussian distribution property of any finite subset of a Gaussian Process, we can compute the distribution of the points that we want to predict conditioning on our observed points. $Prior$ combined with observation gives us $posterior$ distribution over the function that we want to model.
+
+$ADD GRAPH FOR THE ABOVE PARAGRAPH.$
+
+
+
+
+
+\subsection{Gaussian Process Regression}
+
+\subsubsection{Function-space View}
+
+\subsubsection{Decision Theory for Regression}
+
+\newpage
+\section{Model Selection}
+
+\subsection{Covariance Matrix}
+
+\subsection{Kernel functions}
+
+\subsection{Training Methods}
+
+\newpage
+\section{Data Analysis}
+
+\subsection{Data Description}
+
+\subsection{Dimension Reduction}
+
+\subsection{Approximation for Large Dataset}
+
+\subsection{Numeric Results}
+
+\newpage
+\section{Relationships between GPR and Other Models}
+
+\subsection{Representer Theory}
+
+\subsection{Radial Basis Function Network}
+
+\newpage
+\section{Conclusion, Discussion and Further Study}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%\section{How to write mathematics}\label{sec:HowTo}
+%In this section, we show some examples of properly written mathematical expressions and sentences.
+%In the header of your thesis, you can define \LaTeX \ shortcuts to write more quickly.
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{The Black-Scholes model}
+%Consider a given probability space $(\Omega, \mathcal{F},\mathbb{P})$ 
+%supporting a Brownian motion~$(W_t)_{t\geq 0}$.
+%In the Black-Scholes model, the stock price process~$(S_t)_{t\geq 0}$ is the unique strong solution to
+%the following stochastic differential equation:
+%\begin{equation}\label{eq:BS}
+%\frac{\D S_t}{S_t} = r \D t + \sigma \D W_t,
+%\qquad S_0>0,
+%\end{equation}
+%where $r\geq 0$ denotes the instantaneous risk-free interest rate and $\sigma>0$ the instantaneous volatility.
+%A European call price $C_t(S_0,K,\sigma)$ with maturity $t>0$ and strike $K>0$ 
+%pays at maturity $(S_t-K)_+=\max(S_t-K,0)$. 
+%When the stock price follows the Black-Scholes SDE~\eqref{eq:BS}, 
+%Black and Scholes~\cite{BS73} proved that its price at inception is worth
+%$$
+%C_t(S_0,K,\sigma) = S_0\mathcal{N}(d_+) - K\E^{-rt}\mathcal{N}(d_-),
+%$$
+%where
+%$$
+%d_{\pm} := \frac{\log\left(S_0 \E^{rt}/K\right)}{\sigma\sqrt{t}} \pm \frac{\sigma\sqrt{t}}{2},
+%$$
+%and where~$\mathcal{N}$ denotes the cumulative distribution function of the Gaussian random variable.
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Inserting a picture}
+%Here are some examples of how to insert a picture:
+%
+%\begin{figure}[!ht]
+%\centering
+%\subfigure{\includegraphics[scale=0.2]{Picture.eps}}
+%\caption{This is the caption for the figure, detailing what the figure represents.
+%Parameter values,...}
+%\label{fig:Pict}
+%\end{figure}
+%
+%\begin{figure}[!ht]
+%\centering
+%\subfigure{\includegraphics[scale=0.3]{Picture.eps}}
+%\hspace{15pt}
+%\subfigure{\includegraphics[scale=0.3]{Picture.eps}}
+%\caption{Another caption.}
+%\label{fig:Pict2}
+%\end{figure}
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{More complicated mathematical expressions}
+%In the Heston model, the stock price is the unique strong solution to the following stochastic differential equation:
+%\begin{equation}\label{eq:Heston}
+%\begin{array}{rll}
+%\D S_t & = S_t \sqrt{V_t} \D W_t, & S_0 = s>0,\\
+%\D V_t & = \kappa(\theta-V_t)\D t + \xi\sqrt{V_t}\D Z_t, & V_0 = v_0>0,\\
+%\D \langle W, Z\rangle_t & = \rho \D t,
+%\end{array}
+%\end{equation}
+%where $\kappa, \xi, \theta, v_0, s>0$ and the correlation parameter $\rho$ lies in $[-1,1]$.
+%In the system~\eqref{eq:Heston}, the process $(V_t)_{t\geq 0}$ represents the instantaneous
+%variance (squared volatility) of the underlying stock price~$S$.
+%Existence of a unique strong solution for the variance process (also called the Feller process)
+%are guaranteed by the Yamada-Watanabe conditions~\cite[Proposition 2.13, page 291]{KS97}). 
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Writing Definitions, Theorems,...}
+%All the environments for Definitions, Theorems,... are already defined in \LaTeX. 
+%Here is an example:
+%\begin{theorem}[Static replication]\label{thm:StaticReplication}
+%Let~$f:\RR\to\RR$ be a $\mathcal{C}^2$ function, and $F$ a non-negative constant.
+%A European option with payoff $f(S)$ can be fully statically replicated using only cash, 
+%the underlying stock and a continuum of European Calls and Puts.
+%\end{theorem}
+%\begin{proof}
+%By the fundamental theorem of calculus, we have
+%\begin{align*}
+%f(S) & = f(F) + \ind_{\{S>F\}}\int_F^S f'(u)\D u  \ - \  \ind_{\{S<F\}}\int_S^F f'(u)\D u \\
+% & = f(F) + \ind_{\{S>F\}}\int_F^S\left[f'(F) + \int_F^u f''(v)\D v\right]\D u
+% - \ind_{\{S<F\}}\int_S^F \left[f'(F) - \int_u^F f''(v) \D v\right]\D u\\
+% & = f(F) + f'(F) (S-F) + \ind_{\{S>F\}}\int_F^S \int_v^S f''(v)\D u \D v  + \ind_{\{S<F\}}\int_S^F \int_S^v f''(v)\D v\D u \\
+% & = f(F) + f'(F) (S-F) + \ind_{\{S>F\}}\int_F^S f''(v)(S-v) \D v  + \ind_{\{S<F\}}\int_S^F f''(v) (v-S)\D v \\
+% & = f(F) + f'(F) (S-F) + \ind_{\{S>F\}}\int_F^\infty f''(v)(S-v)_+ \D v  + \ind_{\{S<F\}}\int_0^F f''(v) (v-S)_+ \D v
+%\end{align*}
+%\end{proof}
+%
+%\begin{remark}
+%The following two special cases of Theorem~\ref{thm:StaticReplication} are of particular financial importance:
+%\begin{itemize}
+%\item if $F=0$, then the expression above reduces to 
+%$$
+%f(S) = f(0) + S f'(0) + \int_F^\infty f''(v)(S-v)_+ \D v, 
+%$$
+%which means that the option with payoff $f(S)$ can be replicated by $f(0)$ invested in bonds, $f'(0)$ shares 
+%and an infinite strip of call options, each with strike~$v$ and in quantity~$f''(v)$;
+%\item if $F=S_0$, then the formula above reads
+%$$
+%f(S) = \left[f(S_0) - S_0 f'(S_0) \right] + S f'(S_0) + \ind_{\{S>S_0\}}\int_{S_0}^\infty f''(v)(S-v)_+ \D v
+% \ + \ \ind_{\{S<S_0\}}\int_0^{S_0} f''(v)(v-S)_+ \D v\D u,
+%$$
+%so that the option with payoff $f(S)$ can be replicated with bonds, stocks and European Calls and Puts.
+%\end{itemize}
+%\end{remark}
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Further examples}
+%Here is an example of a matrix in $A\in\mathcal{M}_n(\RR)$:
+%$$
+%A = 
+%\begin{pmatrix}
+%a_{11} & a_{12} & \ldots & a_{1n}\\
+%a_{21} & \ddots & \ddots  & \vdots\\
+%\vdots &  \ddots & \ddots  & \vdots\\
+%a_{n1} &  \ldots &  \ldots & a_{1n}.
+%\end{pmatrix}
+%$$
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Common Errors}\label{sec:WhatNotToDo}
+%We list below some recommendations and common mistakes and errors.
+%The reader should check in the previous sections how these were used in a proper way.
+%
+%\begin{itemize}
+%\item When referencing an equation, use \texttt{eqref} instead of \texttt{ref}.
+%However, when referencing a definition, theorem...., use \texttt{ref}
+%\item When quoting a book, paper,..., please indicate the \textbf{precise} (page, which theorem, chapter, section,...) reference, 
+%for example~\cite[Proposition 2.13, page 291]{KS97}), instead of just~\cite{KS97}.
+%\item Mathematical expressions are integral parts of the sentence, 
+%and therefore punctuation rules apply. 
+%They are therefore followed by commas, full stops, semicolons,... See examples above.
+%\item Most mathematical functions are already built in \LaTeX,
+%so that `ln' should be written $`\log'$:
+%$$
+%\log\left(x + \frac{\mathrm{atan}(x)}{y}\right) 
+%\qquad\text{instead of}\qquad
+%ln\left(x + \frac{atan(x)}{y}\right).
+%$$
+%Note here, that the \texttt{atan} function is not already defined, 
+%so that we used \texttt{mathrm\{atan\}} instead, to be consistent.
+%This obviously holds for $\exp$, $\cos$, $\tan$, $\min$, $\max$...
+%\item Bibliography: papers should be referenced precisely, with the journal, volume, year, pages, publisher....
+%If the paper is not published (yet), indicate the web link to find it (SSRN or arXiv).
+%Also, at least in mathematics, authors are listed in alphabetical order.
+%\item There is a difference between $x:=a$ and $x=a$. 
+%The former is a definition for~$x$, whereas in the latter, both~$x$ and~$a$ have already been defined,
+%and this is a statement comparing them.
+%It is usually a good idea to use $x:=a$ whenever you \textbf{define} some quantities. 
+%\item The following notation (even though often used) is wrong:
+%$\sigma_t$ \textbf{IS NOT} a process; it is a random variable representing the (random) state
+%of the process $\sigma=(\sigma_s)_{s\geq 0}$ at time~$s=t$.
+%Likewise, $f(x)$ is not a function, whereas~$f$, or~$f(\cdot)$ is.
+%\item Do not write `Thanks to \textrm{Python}'; maybe `Using \textrm{Python}' is preferable.
+%\item Overfull lines must be avoided at all costs. For a long expression, one solution is, for example,
+%to break it into smaller pieces.
+%For example
+%$$
+%\mathcal{N}\left(d_+^*(\tau)\right)-\E^k\left(1-\mathcal{N}\left(-d_-^*(\tau)\right)\right)
+%  = 1- \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}d_{+}^*(\tau)^2\right)
+%\left\{\frac{1}{d_{+}^*(\tau)} -\frac{1}{d_{-}^*(\tau)}
+% + \frac{1}{d_{-}^*(\tau)^3} - \frac{1}{d_{+}^*(\tau)^3}
+%  + \mathcal{O}\left(\frac{1}{d_{+}^*(\tau)^5}\right)\right\},
+%$$
+%should be written, for example,
+%\begin{align*}
+%\mathcal{N}\left(d_+^*(\tau)\right)-\E^k\left(1-\mathcal{N}\left(-d_-^*(\tau)\right)\right)
+%  = & 1- \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}d_{+}^*(\tau)^2\right)
+%\left\{\frac{1}{d_{+}^*(\tau)} -\frac{1}{d_{-}^*(\tau)}\right.\\
+%  & \left. 
+% + \frac{1}{d_{-}^*(\tau)^3} - \frac{1}{d_{+}^*(\tau)^3}
+%  + \mathcal{O}\left(\frac{1}{d_{+}^*(\tau)^5}\right)\right\},
+%\end{align*}
+%\item Write Call and Put options instead of call and put options.
+%\item Because `'i' / `e' ` `d' can be used both for complex argument / exponential / differential, 
+%and dummy variables, it is a good idea to use slightly different symbols, for instance:
+%$$
+%\int_{0}^{1}\sum_{i=1}^{n}\E^{\I i e^d} \D e.
+%$$
+%THe \LaTeX command is \texttt{mathrm\{e\}} and \texttt{mathrm\{i\}}.
+%\item When using the indicator function, it is better to write
+%$\ind_{\{x\in A\}}$ than $\ind_{(x\in A)}$ or $\ind_{x\in A}$ 
+%since the first notation makes it clear that $\{x\in A\}$ is indeed an event.
+%\item Try to avoid abbreviations: wlog, lhs, rhs....
+%\item Do not use $\exists$, $\forall$ and other cryptic symbols.
+%Words are more powerful and easier to read.
+%\item Do not number all equations. Only those you need to quote.
+%\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Plagiarism}
+%Plagiarism is a fundamental issue, and should not be taken lightly.
+%According to Oxford Dictionary, it is 
+%\textit{the practice of taking someone else's work or ideas and passing them off as one's own}.
+%For the thesis itself, plagiarism will be \textbf{severely sanctioned}, according to  
+%\href{http://www.imperial.ac.uk/student-records-and-data/for-current-students/undergraduate-and-taught-postgraduate/exams-assessments-and-regulations/plagiarism-academic-integrity--exam-offences/}
+%{Imperial College's regulations} 
+%for Imperial College's plagiarism framework.
+%According to \href{https://www.imperial.ac.uk/admin-services/library/research-support/plagiarism-awareness-for-researchers/supervising-plagiarism-by-students/}{College regulations}, 
+%the following are examples of plagiarism (see the previous links for precisions):
+%\begin{itemize}
+%\item Collusion.
+%\item Copy and paste.
+%\item Word switch.
+%\item Misinterpreting common knowledge.
+%\item Concealing sources.
+%\item Self plagiarism.
+%\end{itemize}
+%
+%This obviously applies to any material you submit, whether report or code.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{About the code}
+%This section gathers a few DOs / DON'Ts regarding implementation.
+%
+%\begin{itemize}
+%\item Code has to be annotated. Otherwise, it is impossible (i) to read and, most importantly,
+%(ii) to be used by someone else (remember that you will be working with other people).
+%\item Code available on the Internet is not necessarily (actually scarcely) correct.
+%If you use some, (i) be careful and check it, (ii) reference it precisely.
+%\item Code should be usable. So all the variables should be input of the main functions.
+%In order to change the values of one parameter and re-run the code, the user should not have to dive into the code.
+%\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\appendix
+%
+%\section{Example of an Appendix}\label{app:Appendix}
+%This is Appendix~\ref{app:Appendix}, which usually contained supporting material,
+%or complicated proofs that might make the main text above less readable / fluid.
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+%\include{ThesisConclusion}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\begin{thebibliography}{10}
+
+\bibitem{Lalley}Steven P. Lalley.
+\textit{Introduction to Gaussian Process}. 
+https://galton.uchicago.edu/~lalley/Courses/386/GaussianProcesses.pdf
+
+\bibitem{RandW}Carl E. Rasmussen and Christopher K. I. Williams.
+\textit{Gaussian Process for Machine Learning}. 
+MIT Press, 2006.
+
+
+%\bibitem{BS73}F.~ Black and M.~Scholes.
+%The Pricing of Options and Corporate Liabilities.
+%\textit{Journal of Political Economy}, {\tt 81}(3): 637-659, 1973.
+%
+%\bibitem{Gatheral}J.Gatheral, T. Jaisson and M. Rosenbaum.
+%Volatility is rough.
+%Preprint available at \href{https://arxiv.org/abs/1410.3394}{arXiv:1410.3394}.
+%\bibitem{KS97}I.~ Karatzas and S.E.~Shreve.
+%\textit{Brownian Motion and Stochastic Calculus}.
+%Springer-Verlag, 1997.
+%
+%\bibitem{KT81}S.~Karlin and H.~Taylor.
+%\textit{A Second Course in Stochastic Processes}. 
+%Academic Press, 1981.
+%
+%\bibitem{Tank} P.~Tankov.
+%Pricing and hedging in exponential L\'evy models: review of recent results. 
+%\textit{Paris-Princeton Lecture Notes in Mathematical Finance}, Springer, 2010. 
+%
+%\bibitem{W03}D.~Williams.
+%Probability With Martingales.
+%CUP, 1991.
+%
+\end{thebibliography}
+%
+
+\end{document}
