@@ -1,5 +1,5 @@
 %&latexf
-\documentclass[[11pt,twoside,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 \usepackage{color}
 \setlength{\hoffset}{-0.5in}\hoffset-0.5in
 \setlength{\textwidth}{15cm}
@@ -11,7 +11,7 @@
 \usepackage{color}
 \usepackage[dvips]{graphicx}
 \usepackage{subfigure}
-\linespread{1.6}
+\linespread{1.5}
 %\font\twelvemsb=msbm10 at 12pt
 \newfam\msbfam
 %\textfont\msbfam=\twelvemsb
@@ -38,6 +38,8 @@
 \newcommand{\D}{\mathrm{d}}
 \newcommand{\F}{\mathrm{F}}
 \newcommand{\E}{\mathrm{e}}
+\newcommand{\GP}{\mathcal{GP}}
+\newcommand{\EE}{\mathbb{E}}
 \newcommand{\RR}{\mathbb{R}}
 \newcommand{\sgn}{\mathrm{sgn}}
 \newcommand{\atanh}{\mathrm{arctanh}}
@@ -46,7 +48,9 @@
 \def\blue#1{\textcolor{blue}{#1}}
 \def\red#1{\textcolor{red}{#1}}
 
-
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1em}
+\let\vec\mathbf
 
 \begin{document}
 %The following commands include several pages which contain the front page, acknowledgements,...
@@ -91,9 +95,7 @@
 
 \subsubsection{Machine Learning for pricing -- Gaussian Process Regression}
 
-%\begin{remark}
-%This section will be extended later.
-%\end{remark}
+
 \newpage
 \section{Gaussian Process}
 
@@ -101,23 +103,125 @@ There are broadly two common approaches when it comes to supervised machine lear
 
 \subsection{Introduction to Gaussian Process}
 
-\begin{definition}(Gaussian Process)
-	A $Gaussian$ process $\{X_i\}_{i\in \mathcal{I}}$ indexed by an index set $\mathcal{I}$ is a family of random variables $X_i$'s, all defined on the same probability space, such that any finite subset $\mathcal{F}\subset\mathcal{I}$ the random vector $X_{\mathcal{F}} := \{X_i\}_{i\in \mathcal{F}}$ has a multivariate Gaussian distribution.\cite[Lalley]{Lalley}
+We assume the readers are familiar with the definition and properties of multivariate Gaussian distributions and stochastic processes. We define a Gaussian process by the following definition.
+
+\begin{definition}(Gaussian Process)\label{def:gp}
+	A $Gaussian$ process $\{X_i\}_{i\in \mathcal{I}}$ indexed by an index set $\mathcal{I}$ is a family of random variables $X_i$'s, all defined on the same probability space, such that any finite subset $\mathcal{F}\subset\mathcal{I}$, the random vector $X_{\mathcal{F}} := \{X_i\}_{i\in \mathcal{F}}$ has a multivariate Gaussian distribution.\cite[Lalley]{Lalley}
 \end{definition}
 
-Because of their nice analytical tractability, it is convenient to model finite collection of real-valued functions using  multivariate Gaussian distribution. In practice, we can think of a Gaussian Process as a very long multivariate gaussian vector indexed by some index space (e.g. time, space, hyperspace...). The data we use to train our model will be some dimensions of this vector that we have observed, and we want to make prediction of dimensions that we don't know. 
+Because of their nice analytical tractability, it is convenient to model finite collection of real-valued functions using  multivariate Gaussian distribution. In practice, we can think of a Gaussian Process as a very long multivariate gaussian vector indexed by some index space (e.g. time, space, hyperspace \ldots). The data we use to train our model will be some dimensions of this vector that we have observed, and we want to make prediction of dimensions that we don't know. 
 
 Before we observe any values from a Gaussian Process, we only have a $prior$ distribution over functions specified by that Gaussian Process which may include all the continuous functions. Once we have observed some data points, the possible functions are now reduced to those that go through our observed points. Because of the multivariate gaussian distribution property of any finite subset of a Gaussian Process, we can compute the distribution of the points that we want to predict conditioning on our observed points. $Prior$ combined with observation gives us $posterior$ distribution over the function that we want to model.
 
-$ADD GRAPH FOR THE ABOVE PARAGRAPH.$
+ADD GRAPH TO ILLUSTRATE HOW GP WORKS.
 
+When we have more data points coming in, the uncertainty from the posterior distribution will be decreased. Hence, our prediction will become more and more confident when we have more and more data. For traditional parametric methods, the model will tend to overfit the training data when the size of training set grows. However, for Gaussian Processes, since we are not assuming any specific form of the predicted function, we do not have to worry about overfitting. There are still some flexibility left (specified by the variance of the posterior Gaussian distribution), even we have a lot of observation data points added to the  prior distribution. 
 
-
-
-
-\subsection{Gaussian Process Regression}
+\subsubsection{Weight-space View}
 
 \subsubsection{Function-space View}
+If we consider a Gaussian Process as a continuous stochastic process, then it defines a probability distribution for functions \cite[Papoulis]{Papoulis}. Since a multivariate Gaussian distribution can be completely specified by its mean and covariance, by definition \ref{def:gp}, then a Gaussian Process can be fully specified by its mean function and covariance function \cite[Rasmussen and Williams]{RandW}. If we define the mean function as $m(\vec{x})$ and covariance function $k(\vec{x},\vec{x'})$ of a real-valued Gaussian Process $f(\vec x)$ as
+\begin{equation} \label{}
+\begin{split}
+m(\vec{x}) & = \EE \left[ f(\vec x)\right] \\
+k(\vec{x},\vec{x'}) & = \EE \left[ \left( f(\vec x)-m(\vec{x})\right)\left( f(\vec x')-m(\vec{x'})\right)\right] 
+\end{split}
+\end{equation}
+
+and then we can write the Gaussian Process $f(\vec x)$ as
+\begin{equation} \label{}
+f(\vec x) \  \sim \ \GP\left(m(\vec{x}),k(\vec{x},\vec{x'})  \right).
+\end{equation}
+
+Suppose we choose a finite subset of random variables $\vec f$ from the Gaussian Process $f(\vec x)$, with the corresponding index set $\mathcal X$, then by definition of Gaussian Process, we know the distribution of $\vec f$:
+\begin{equation} \label{}
+p\left(\vec f \mid \mathcal X\right)\ =\ \mathcal N \left(\vec m , \vec K \right),
+\end{equation}
+where $\mathcal N \left(\vec m , \vec K \right)$ denotes a multivariate Gaussian distribution with mean $\vec m$ and covariance $\vec K$. 
+In our task, the index set $\mathcal X$ can be a subset of $\mathbb R ^d$, where $d$ is the dimension of our input space. Usually we take the mean function to be a constant function equals to zero for notational simplicity. In practice, one can subtract the mean to achieve this. 
+
+If we estimate our target function $f(\vec x)$ as a Gaussian process, then we need to check if the $consistency$ requirement of estimator is fulfilled. We can easily do this by the marginalization property of multivariate Gaussian distributions. The marginalization property tells us that if 
+\begin{equation*} \label{}
+\left(\vec f_1, \vec f_2\right)\ \sim \ \mathcal N \left(\vec m , \vec K \right),
+\end{equation*}
+
+then we also have 
+\begin{equation*} \label{}
+\begin{split}
+\vec f_1\ & \sim \ \mathcal N \left(\vec m_1 , \vec K_{11} \right)\\
+\vec f_2\ & \sim \ \mathcal N \left(\vec m_2 , \vec K_{22} \right).
+\end{split}
+\end{equation*}
+where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove this relationship in the following:
+\begin{proof}
+	We prove the marginal density $p(\vec f_1)$ follows Gaussian distribution. First, by definition of marginalization, we have
+	\begin{equation*} \label{}
+	p(\vec f_1) = \int p(\vec f_1,\vec f_2)d \vec f_2,
+	\end{equation*}
+	where 
+	\begin{equation*} \label{}
+	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\exp{(E)}
+	\end{equation*}
+	and $E$ is given by
+		\begin{equation*} \label{}
+		\begin{split}
+		E &= -\frac{1}{2}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)^T\vec\Lambda_{22}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)\\
+		&+\frac{1}{2}\left(\vec f_1^T \vec\Lambda_{12}\Lambda_{22}^{-1}\Lambda_{21}\vec f_1 - 2\vec f_1^T \vec\Lambda_{12}\Lambda_{22}^{-1}\Lambda_{21}\vec m_1 + \vec m_1^T \vec\Lambda_{12}\Lambda_{22}^{-1}\Lambda_{21}\vec m_1\right)\\
+		&-\frac{1}{2}\left(\vec f_1^T\Lambda_{11}\vec f_1 - 2\vec f_1^T\Lambda_{11}\vec m_1 + \vec m_1^T\Lambda_{11}\vec m_1\right)\\
+		&=-\frac{1}{2}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)^T\vec\Lambda_{22}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)\\
+		&-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\left(\vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21}\right)\left(\vec f_1 - \vec m _1 \right)
+		\end{split}
+		\end{equation*}
+	where $\vec\Lambda$ is the information matrix and
+	\begin{equation*} \label{}
+	\vec \Lambda = \vec K^{-1} = 
+	\begin{pmatrix}
+	\vec\Lambda_{11} & \vec\Lambda_{12}\\
+	\vec\Lambda_{21} & \vec\Lambda_{22}
+	\end{pmatrix}.
+	\end{equation*}
+	Using the \textit{matrix inversion lemma} (see Appendix), we have
+	\begin{equation*} \label{}
+	\vec K_{11}^{-1} = \vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21},
+	\end{equation*}
+	combined with the line above, we get
+	\begin{equation*} \label{}
+	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\exp{(E_1)}\exp{(E_2)},
+	\end{equation*}
+	where
+	\begin{equation*} \label{}
+	\begin{split}
+	E_1 &=-\frac{1}{2}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)^T\vec\Lambda_{22}\left(\vec f_2-(\vec m_2 - \vec\Lambda_{22}^{-1} \vec\Lambda_{21}(\vec f_1 - \vec m_1))\right)\\
+	E_2 & = -\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\left(\vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21}\right)\left(\vec f_1 - \vec m _1 \right).
+	\end{split}
+	\end{equation*}
+	Since $E_2$ is independent of $\vec f_1$, we have
+	\begin{equation*} \label{}
+	p(\vec f_1) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\int \exp{(E_1)}d\vec f_2\exp{(E_2)}.
+	\end{equation*}
+	Integral of a probability density function is one, we get
+	\begin{equation*} \label{}
+	\int \exp{(E_1)}d\vec f_2 = (2\pi)^{n_2/2}\sqrt{\det \vec \Lambda_{22}^{-1}}
+	\end{equation*}
+	plug this into the line above, we get
+	\begin{equation*} \label{}
+	p(\vec f_1) = \frac{\sqrt{\det \vec \Lambda_{22}^{-1}}}{(2\pi)^{n_1/2}\sqrt{\det \vec K}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\vec K_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
+	\end{equation*}
+	Again, by the \textit{matrix inversion lemma}, we have
+	\begin{equation*} \label{}
+	\begin{split}
+	\det\vec K&= \det\vec K_{11}\det(\vec K_{22}-\vec K_{21}\vec K_{11}^{-1}\vec K_{12})\\
+	\vec \Lambda_{22}^{-1} &= \vec K_{22}-\vec K_{21}\vec K_{11}^{-1}\vec K_{12}.
+	\end{split}
+	\end{equation*}
+	Plug those results into the previous line, we get
+	\begin{equation*} \label{}
+	p(\vec f_1) = \frac{1}{(2\pi)^{n_1/2}\sqrt{\det \vec K_{11}}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\vec K_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
+	\end{equation*}
+	which proves that $\vec f_1\sim\mathcal{N}(\vec m_1,\vec K_{11})$.
+\end{proof}
+Now that we have the $consistency$ requirement fulfilled, we can introduce Gaussian Process Regression models.
+\subsection{Gaussian Process Regression}
 
 \subsubsection{Decision Theory for Regression}
 
@@ -411,6 +515,10 @@ $ADD GRAPH FOR THE ABOVE PARAGRAPH.$
 \bibitem{Lalley}Steven P. Lalley.
 \textit{Introduction to Gaussian Process}. 
 https://galton.uchicago.edu/~lalley/Courses/386/GaussianProcesses.pdf
+
+\bibitem{Papoulis}Athanasios Papoulis.
+\textit{Probability, Random Variables, and Stochastic Processes}. 
+McGraw-Hill, New York, third edition, 1991, p. 15, 17
 
 \bibitem{RandW}Carl E. Rasmussen and Christopher K. I. Williams.
 \textit{Gaussian Process for Machine Learning}. 
