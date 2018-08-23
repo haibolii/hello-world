@@ -19,7 +19,7 @@
 
 \topmargin = 20pt
 \voffset = -20pt
-\addtolength{\textheight}{2cm}
+\addtolength{\textheight}{2.0cm}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{exa}{Example}[section]
 \newtheorem{corollary}[theorem]{Corollary}
@@ -135,24 +135,24 @@ f(\vec x) \  \sim \ \GP\left(m(\vec{x}),k(\vec{x},\vec{x'})  \right).
 
 Suppose we choose a finite subset of random variables $\vec f$ from the Gaussian Process $f(\vec x)$, with the corresponding index set $\mathcal X$, then by definition of Gaussian Process, we know the distribution of $\vec f$:
 \begin{equation} \label{}
-p\left(\vec f \mid \mathcal X\right)\ =\ \mathcal N \left(\vec m , \vec K \right),
+p\left(\vec f \mid \mathcal X\right)\ =\ \mathcal N \left(\vec m , K \right),
 \end{equation}
-where $\mathcal N \left(\vec m , \vec K \right)$ denotes a multivariate Gaussian distribution with mean $\vec m$ and covariance $\vec K$. 
+where $\mathcal N \left(\vec m , K \right)$ denotes a multivariate Gaussian distribution with mean $\vec m$ and covariance $K$. 
 In our task, the index set $\mathcal X$ can be a subset of $\mathbb R ^d$, where $d$ is the dimension of our input space. Usually we take the mean function to be a constant function equals to zero for notational simplicity. In practice, one can subtract the mean to achieve this. 
 
 If we estimate our target function $f(\vec x)$ as a Gaussian process, then we need to check if the $consistency$ requirement of estimator is fulfilled. We can easily do this by the marginalization property of multivariate Gaussian distributions. The marginalization property tells us that if 
 \begin{equation*} \label{}
-\left(\vec f_1, \vec f_2\right)\ \sim \ \mathcal N \left(\vec m , \vec K \right),
+\left(\vec f_1, \vec f_2\right)\ \sim \ \mathcal N \left(\vec m , K \right),
 \end{equation*}
 
 then we also have 
 \begin{equation*} \label{}
 \begin{split}
-\vec f_1\ & \sim \ \mathcal N \left(\vec m_1 , \vec K_{11} \right)\\
-\vec f_2\ & \sim \ \mathcal N \left(\vec m_2 , \vec K_{22} \right).
+\vec f_1\ & \sim \ \mathcal N \left(\vec m_1 , K_{11} \right)\\
+\vec f_2\ & \sim \ \mathcal N \left(\vec m_2 , K_{22} \right).
 \end{split}
 \end{equation*}
-where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove this relationship in the following:
+where $K_{11}$ and  $K_{22}$ are sub-matrices of $K$. We prove this relationship in the following:
 \begin{proof}
 	We prove the marginal density $p(\vec f_1)$ follows Gaussian distribution. First, by definition of marginalization, we have
 	\begin{equation*} \label{}
@@ -160,7 +160,7 @@ where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove th
 	\end{equation*}
 	where 
 	\begin{equation*} \label{}
-	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\exp{(E)}
+	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det K}}\exp{(E)}
 	\end{equation*}
 	and $E$ is given by
 		\begin{equation*} \label{}
@@ -174,7 +174,7 @@ where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove th
 		\end{equation*}
 	where $\vec\Lambda$ is the information matrix and
 	\begin{equation*} \label{}
-	\vec \Lambda = \vec K^{-1} = 
+	\vec \Lambda = K^{-1} = 
 	\begin{pmatrix}
 	\vec\Lambda_{11} & \vec\Lambda_{12}\\
 	\vec\Lambda_{21} & \vec\Lambda_{22}
@@ -182,11 +182,11 @@ where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove th
 	\end{equation*}
 	Using the \textit{matrix inversion lemma} (see Appendix), we have
 	\begin{equation*} \label{}
-	\vec K_{11}^{-1} = \vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21},
+	K_{11}^{-1} = \vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21},
 	\end{equation*}
 	combined with the line above, we get
 	\begin{equation*} \label{}
-	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\exp{(E_1)}\exp{(E_2)},
+	p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det K}}\exp{(E_1)}\exp{(E_2)},
 	\end{equation*}
 	where
 	\begin{equation*} \label{}
@@ -197,7 +197,7 @@ where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove th
 	\end{equation*}
 	Since $E_2$ is independent of $\vec f_1$, we have
 	\begin{equation*} \label{}
-	p(\vec f_1) = \frac{1}{(2\pi)^{n/2}\sqrt{\det \vec K}}\int \exp{(E_1)}d\vec f_2\exp{(E_2)}.
+	p(\vec f_1) = \frac{1}{(2\pi)^{n/2}\sqrt{\det K}}\int \exp{(E_1)}d\vec f_2\exp{(E_2)}.
 	\end{equation*}
 	Integral of a probability density function is one, we get
 	\begin{equation*} \label{}
@@ -205,32 +205,168 @@ where $\vec K_{11}$ and  $\vec K_{22}$ are sub-matrices of $\vec K$. We prove th
 	\end{equation*}
 	plug this into the line above, we get
 	\begin{equation*} \label{}
-	p(\vec f_1) = \frac{\sqrt{\det \vec \Lambda_{22}^{-1}}}{(2\pi)^{n_1/2}\sqrt{\det \vec K}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\vec K_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
+	p(\vec f_1) = \frac{\sqrt{\det \vec \Lambda_{22}^{-1}}}{(2\pi)^{n_1/2}\sqrt{\det K}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^TK_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
 	\end{equation*}
 	Again, by the \textit{matrix inversion lemma}, we have
 	\begin{equation*} \label{}
 	\begin{split}
-	\det\vec K&= \det\vec K_{11}\det(\vec K_{22}-\vec K_{21}\vec K_{11}^{-1}\vec K_{12})\\
-	\vec \Lambda_{22}^{-1} &= \vec K_{22}-\vec K_{21}\vec K_{11}^{-1}\vec K_{12}.
+	\det K&= \det K_{11}\det(K_{22}-K_{21}K_{11}^{-1}K_{12})\\
+	\vec \Lambda_{22}^{-1} &= K_{22}-K_{21}K_{11}^{-1}K_{12}.
 	\end{split}
 	\end{equation*}
 	Plug those results into the previous line, we get
 	\begin{equation*} \label{}
-	p(\vec f_1) = \frac{1}{(2\pi)^{n_1/2}\sqrt{\det \vec K_{11}}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^T\vec K_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
+	p(\vec f_1) = \frac{1}{(2\pi)^{n_1/2}\sqrt{\det K_{11}}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^TK_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
 	\end{equation*}
-	which proves that $\vec f_1\sim\mathcal{N}(\vec m_1,\vec K_{11})$.
+	which proves that $\vec f_1\sim\mathcal{N}(\vec m_1,K_{11})$.
 \end{proof}
 Now that we have the $consistency$ requirement fulfilled, we can introduce Gaussian Process Regression models.
 \subsection{Gaussian Process Regression}
+So far, we have introduced Gaussian Processes. In order to solve the regression problem, we first define a prior distribution of our target functions by a Gaussian process, then apply Bayesian inference to get the posterior distribution of our predictions. 
 
-\subsubsection{Decision Theory for Regression}
+We start by modelling our target latent function $\vec f$ by a zero mean Gaussian Process, then $\vec f$ has prior distribution:
+\begin{equation} \label{noise-free}
+	\vec f \sim \mathcal{N}(\vec 0, K),
+\end{equation}
+where $K$ is the covariance matrix.
+
+First, we assume the special case where our target functions are noise-free. Suppose we have observed data $\{(\vec x_i,f_i)|i=1,...,n\}$, we want to infer the value of our target function at input points $\{\vec x_j | j = 1,...,n_*\}$. We call $\vec f$ as training outputs and $\vec f_*$ as test outputs. From the prior distribution, we know 
+$\vec f$ and $\vec f_*$ have joint distribution
+\begin{equation} \label{}
+	\begin{bmatrix}
+	\vec f\\
+	\vec f_*
+	\end{bmatrix}
+	\sim
+	\mathcal{N}\left(\vec 0, 
+	\begin{bmatrix}
+	K(X,X) & K(X,X_*)\\
+	K(X_*,X) & K(X_*,X_*)
+	\end{bmatrix}
+	\right).
+\end{equation}
+$K(X,X)$ denotes the covariance matrix of $n$ training data points, $K(X_*,X_*)$ denotes the covariance of $n_*$ test data points and $K(X_*,X)$ denotes the cross-covariance of training and test data points. To get the distribution of our prediction on the test data set, we just condition the joint Gaussian prior distribution on the training data set. Then we get
+\begin{equation} \label{eq:pred1}
+	\vec f_* | X_*, X, \vec f \sim \mathcal N (\vec m_*, \vec V_*),
+\end{equation}
+where
+\begin{equation} \label{eq:pred2}
+\begin{split}
+\vec m_* &= K(X_*,X)K(X,X)^{-1}\vec f,\\
+\vec V_* &= K(X_*,X_*) - K(X_*,X)K(X,X)^{-1}K(X,X_*).
+\end{split}
+\end{equation}
+
+ADD PROOF FOR THE ABOVE RESULT.
+
+Our prediction of the test set is a posterior gaussian distribution with mean $\vec m_*$ and covariance $\vec V_*$.  Notice that in our prediction, rather than giving specific parametric relationship between the test input $\vec X_*$ and the prediction value, we just give a Gaussian distribution inferred from our prior distribution and observation. If we want to get an exact value of $\vec f_*$ for prediction, we can sample from the posterior distribution or simply take the mean $\vec m_*$ as our prediction. For more on this, see section \ref{sec:decision_theory}. We can also get the variance $v_*$ of each individual element in vector  $\vec f_*$ from the covariance matrix $\vec V_*$. The smaller the variance is, the more confident we are about the prediction. 
+
+In most real-life application, it is more realistic to incorporate noise in our target values. We can denote the noisy target values as $\vec y$ in training set. We then write the noisy value as $\vec y = f(\vec x) + \vec\epsilon$. Assuming identical, independent Gaussian noise $\vec \epsilon$ with mean $0$ and variance $\sigma^2_n$, then the covariance on the noisy observation is
+\begin{equation*} \label{}
+\mathrm{cov} (y_i,y_j) = k(\vec x_i,\vec x_j) + \sigma^2_n \delta_{ij}
+\end{equation*}
+where $\delta_{ij}$ is a Kronecker delta which is $1$ is $i=j$ and $0$ otherwise. The above relationship is vector form is
+\begin{equation} \label{cov_y}
+\mathrm{cov} (\vec y) = K(X,X) + \sigma^2_n \vec I,
+\end{equation}
+where the identity matrix $\vec I$ comes from the independence assumption of the noise. Then we can write the joint prior distribution of noisy training data and test data as
+\begin{equation} \label{}
+	\begin{bmatrix}
+	\vec y\\
+	\vec f_*
+	\end{bmatrix}
+	\sim
+	\mathcal{N}\left(\vec 0, 
+	\begin{bmatrix}
+	K(X,X)+ \sigma^2_n \vec I & K(X,X_*)\\
+	K(X_*,X) & K(X_*,X_*)
+	\end{bmatrix}
+	\right).
+\end{equation}
+Then by the same derivation to eq. \ref{eq:pred1} and \ref{eq:pred2}, we get the prediction for test data. The posterior distribution is 
+\begin{equation} \label{eq:pred3}
+	\vec f_* | X_*, X, \vec y \sim \mathcal N (\widehat{\vec m_*}, \widehat{\vec V_*}),
+\end{equation}
+where
+\begin{equation} \label{eq:pred4}
+\begin{split}
+\widehat{\vec m_* }&= K(X_*,X)[K(X,X)+ \sigma^2_n \vec I]^{-1}\vec y,\\
+\widehat{\vec V_*} &= K(X_*,X_*) - K(X_*,X)[K(X,X)+ \sigma^2_n \vec I]^{-1}K(X,X_*).
+\end{split}
+\end{equation}
+
+Notice that though we assume the mean function as constantly zero in the prior distribution, we get non-zero mean function in the posterior distribution for the test data set. This can be interpreted as after observing the training set, we have more information about the distribution of the test set. Also, different from a parametric model, when trained, the model can basically throw away all the training data, the Gaussian Process Regression model needs to store all the training data for prediction. For a parametric model, the goal is to find the predefined parametric relationship between features and targets, once done that, we don't need the training data for prediction. The features, ${/vec x^*_i | i=1,...,n^*}$, will give all the information we need for prediction $/vec y^*_i$'s. However, in Gaussian Process Regression model, the prediction eq. \ref{eq:pred3} and eq. \ref{eq:pred4} need the information from training set to get the posterior distribution of the test set.
+
+\subsection{Predicition from Gaussian Process Regression}\label{sec:decision_theory}
+Form eq. \ref{eq:pred3}, we know that the posterior distribution of test data is Gaussian with mean and variance given in eq.\ref{eq:pred4}. But if we want an explicit prediction for our target function rather than a distribution, what is the value then? One intuitive answer would be the mean of posterior distribution. In practice, this prediction is appropriate in most real-life tasks. There are in-depth explanation in \cite[Rasmussen and Williams, sec 2.4]{RandW}, we give a summary of the rationale in the following.
+
+To find a optimal prediction value, we need a way to measure our performance. Let's define a \textit{loss function}, $\mathcal{L}(\hat y,y)$, which specifies the loss between the prediction, $\hat y$ and the true value, $y$. The loss function can be \textit{mean squared error} or \textit{mean absolute error} which are both symmetric loss functions.
+
+We want to give a prediction value that produces the minimum loss possible. But how do we achieve that when we don't know the true value? According to \cite[Rasmussen and Williams, sec 2.4]{RandW}, we can minimize the expected loss, by averaging the loss with respect to the posterior distribution, which is 
+\begin{equation}\label{loss1}
+\tilde{R}_{\mathcal{L}}(\hat y|\vec x_*)\ = \ \int\mathcal{L}(y_*,\hat y)p(y_*|\vec x_*)dy_*.
+\end{equation}\label{loss2}
+Our best prediction is the one that minimizes this loss, i.e.
+\begin{equation}
+y_{optimal}|\vec x_*\ = \ \underset{\hat y}{\mathrm{argmin}}\tilde{R}_{\mathcal{L}}(\hat y|\vec x_*).
+\end{equation}
+For \textit{mean squared error} loss function, the minimum occurs at the mean of $y_*$. For \textit{mean absolute error} loss function, the minimum occurs at the median of $y_*$. In our case, the distribution of $y_*$ is Gaussian, so the mean and median coincide. Furthermore, for other symmetric loss function and symmetric posterior distribution, the optimal prediction occurs at the mean of the distribution. For asymmetric loss functions, the optimal prediction can be computed from eq. \ref{loss1} and eq. \ref{loss2}. For more detail, see \cite[Berger]{Berger}.
 
 \newpage
 \section{Model Selection}
+When modelling our target function as a zero mean Gaussian process regression(GPR), i.e.
+\begin{equation*} \label{}
+f(\vec x) \  \sim \ \GP\left(\vec 0,k(\vec{x},\vec{x'})  \right).
+\end{equation*}
+the main task will be to find a good configuration of covariance matrix, generated by kernel function $k$ and a set of hyperparameters that gives the best performance. In this section, we will discuss several aspects of model selection, namely covariance matrix, kernel functions, hyperparameters optimization.
 
-\subsection{Covariance Matrix}
+\subsection{Likelihood of the training data}
+From eq. \ref{noise-free}, we know that the noise-free target value follow multivariate Gaussian distribution with mean $\vec 0$ and covariance $K(X,X)$. If we assume i.i.d. Gaussian noise, then we have $\vec y = f(\vec x) + \vec\epsilon$, where $\vec\epsilon \sim \mathcal{N}(\vec 0, \sigma^2_n)$. Let $K_y = K + \sigma^2_nI$, then by eq. \ref{cov_y}. we have
+\begin{equation}
+\vec y \  \sim \ \mathcal N \left(\vec 0,K_y  \right).
+\end{equation}
+Since the likelihood of a Gaussian distribution involves exponential term, we take the logarithm of it. So the log likelihood of $\vec y$ given $\vec X$ and $\vec \theta$ is
+\begin{equation}\label{log-likelihood}
+\log p(\vec y|\vec X, \vec \theta)=-\frac{1}{2}\vec y^T K_y^{-1}\vec y-\frac{1}{2}\log|K_y| - \frac{n}{2}\log 2\pi,
+\end{equation}
+where $\vec \theta$ is parameters in kernel function $k$.
 
 \subsection{Kernel functions}
+A kernel function (also called a covariance function), $k$ governs the behaviour and property of a zero-mean Gaussian process. Since for any element, $K_{ij}$ in the covariance matrix $K$, we know $K_{ij} = k(\vec x_i,\vec x_j)$. Then the relationship of covariance matrix $K$ and kernel function $k$ is
+\begin{equation}\label{cov_mat}
+K = 
+\begin{bmatrix}
+k(\vec x_1,\vec x_1) & k(\vec x_1,\vec x_2)& \dots& k(\vec x_1,\vec x_n)\\
+k(\vec x_2,\vec x_1) & k(\vec x_2,\vec x_2)& \dots& k(\vec x_2,\vec x_n)\\
+\vdots & \vdots  & \ddots & \vdots \\
+k(\vec x_n,\vec x_1) & k(\vec x_n,\vec x_2)& \dots& k(\vec x_n,\vec x_n)
+\end{bmatrix}
+\end{equation}
+
+ADD A GRAPH TO ILLUSTRATE A COVARIANCE MATRIX.
+
+A kernel function in some sense measures the similarity between two data points in the input space. The basic assumption in GPR is that two points are close in the input space should be more likely to have a similar target value. 
+
+Since a covariance matrix is always positive-semidefinite\footnotemark[1] and symmetric, for a function to be qualified as a kernel function, it must be positive-semidefinite\footnotemark[2] and symmetric in the sense that $k(\vec x_i,\vec x_j) = k(\vec x_j,\vec x_i)$\cite[Rasmussen and Williams, sec 4.1]{RandW}.
+
+\footnotetext[1]{
+	A symmetric $n\times n$ real matrix $\vec M$ is said to be positive-semidefinite(PSD) if $\vec v^T\vec M\vec v$ is non-negative for all $\vec v$ in $\RR^n$.
+	}
+\footnotetext[2]{
+	A $kernel$ is said to be positive-semidefinite if 
+	\[
+		\int k(\vec x,\vec x')f(\vec x)f(\vec x')d\mu(\vec x)d\mu(\vec x')\, \geq 0,
+	\]
+	for all $f\in L_2(\mathcal X,\mu)$, $\mathcal X$ is the input space and $\mu$ is a measure.
+	}
+
+\subsubsection{Several Common Kernel functions}
+Kernel function map $\vec x,\vec x' \in \mathcal X$ into $\RR$. We measure the similarity of $\vec x,\vec x'$ in $\mathcal X$ by the result from the kernel function.
+
+A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. We write $k$ to take only single argument $\vec r = \vec x - \vec x'$. The mostly commonly used stationary kernel function is the \textit{squared exponential}(SE) kernel function, which has the form
+\begin{equation}
+k_{SE}\, = \, \sigma^2\exp\left(-\frac{\vec r^2}{2l^2}\right),
+\end{equation}
 
 \subsection{Training Methods}
 
@@ -524,6 +660,9 @@ McGraw-Hill, New York, third edition, 1991, p. 15, 17
 \textit{Gaussian Process for Machine Learning}. 
 MIT Press, 2006.
 
+\bibitem{Berger}J. O. Berger.
+\textit{Statistical Decision Theory and Bayesian Analysis}. 
+Springer, New York. Second edition. 1985. pp.22,35
 
 %\bibitem{BS73}F.~ Black and M.~Scholes.
 %The Pricing of Options and Corporate Liabilities.
