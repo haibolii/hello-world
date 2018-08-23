@@ -363,10 +363,18 @@ Since a covariance matrix is always positive-semidefinite\footnotemark[1] and sy
 \subsubsection{Several Common Kernel functions}
 Kernel function map $\vec x,\vec x' \in \mathcal X$ into $\RR$. We measure the similarity of $\vec x,\vec x'$ in $\mathcal X$ by the result from the kernel function.
 
-A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. We write $k$ to take only single argument $\vec r = \vec x - \vec x'$. The mostly commonly used stationary kernel function is the \textit{squared exponential}(SE) kernel function, which has the form
+A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. We write $k$ to take only single argument $\vec r = \vec x - \vec x'$. 
+\subsubsection*{Squared Exponential Kernel Function}
+The mostly commonly used stationary kernel function is the \textit{squared exponential}(SE) kernel function, which has the form
 \begin{equation}
 k_{SE}\, = \, \sigma^2\exp\left(-\frac{\vec r^2}{2l^2}\right),
 \end{equation}
+the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ controls the magnitude of function value. The \textit{squared exponential} kernel function is also known as the \textit{radial basis function}. 
+
+\subsubsection*{Matern Class of Kernel Functions}
+
+\subsubsection*{Linear Kernel Functions}
+
 
 \subsection{Training Methods}
 
