@@ -1,5 +1,5 @@
 %&latexf
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage{color}
 \setlength{\hoffset}{-0.5in}\hoffset-0.5in
 \setlength{\textwidth}{15cm}
@@ -9,8 +9,12 @@
 \usepackage{stmaryrd}
 \usepackage{fancyhdr}
 \usepackage{color}
-\usepackage[dvips]{graphicx}
+%\usepackage[dvips]{graphicx}
+\usepackage{graphicx}
 \usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+
 \linespread{1.5}
 %\font\twelvemsb=msbm10 at 12pt
 \newfam\msbfam
@@ -87,6 +91,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
+(EXPEND LATER)
 \subsection{General Introduction}
 
 \subsection{CDS,CDO and Synthetic CDO}
@@ -113,12 +118,17 @@ Because of their nice analytical tractability, it is convenient to model finite 
 
 Before we observe any values from a Gaussian Process, we only have a $prior$ distribution over functions specified by that Gaussian Process which may include all the continuous functions. Once we have observed some data points, the possible functions are now reduced to those that go through our observed points. Because of the multivariate gaussian distribution property of any finite subset of a Gaussian Process, we can compute the distribution of the points that we want to predict conditioning on our observed points. $Prior$ combined with observation gives us $posterior$ distribution over the function that we want to model.
 
-ADD GRAPH TO ILLUSTRATE HOW GP WORKS.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.6\linewidth]{gp.png}
+	\caption{Will add caption later}
+	\label{fig:gp}
+\end{figure}
 
 When we have more data points coming in, the uncertainty from the posterior distribution will be decreased. Hence, our prediction will become more and more confident when we have more and more data. For traditional parametric methods, the model will tend to overfit the training data when the size of training set grows. However, for Gaussian Processes, since we are not assuming any specific form of the predicted function, we do not have to worry about overfitting. There are still some flexibility left (specified by the variance of the posterior Gaussian distribution), even we have a lot of observation data points added to the  prior distribution. 
 
 \subsubsection{Weight-space View}
-
+EXPAND LATER
 \subsubsection{Function-space View}
 If we consider a Gaussian Process as a continuous stochastic process, then it defines a probability distribution for functions \cite[Papoulis]{Papoulis}. Since a multivariate Gaussian distribution can be completely specified by its mean and covariance, by definition \ref{def:gp}, then a Gaussian Process can be fully specified by its mean function and covariance function \cite[Rasmussen and Williams]{RandW}. If we define the mean function as $m(\vec{x})$ and covariance function $k(\vec{x},\vec{x'})$ of a real-valued Gaussian Process $f(\vec x)$ as
 \begin{equation} \label{}
@@ -295,7 +305,7 @@ where
 \end{split}
 \end{equation}
 
-Notice that though we assume the mean function as constantly zero in the prior distribution, we get non-zero mean function in the posterior distribution for the test data set. This can be interpreted as after observing the training set, we have more information about the distribution of the test set. Also, different from a parametric model, when trained, the model can basically throw away all the training data, the Gaussian Process Regression model needs to store all the training data for prediction. For a parametric model, the goal is to find the predefined parametric relationship between features and targets, once done that, we don't need the training data for prediction. The features, ${/vec x^*_i | i=1,...,n^*}$, will give all the information we need for prediction $/vec y^*_i$'s. However, in Gaussian Process Regression model, the prediction eq. \ref{eq:pred3} and eq. \ref{eq:pred4} need the information from training set to get the posterior distribution of the test set.
+Notice that though we assume the mean function as constantly zero in the prior distribution, we get non-zero mean function in the posterior distribution for the test data set. This can be interpreted as after observing the training set, we have more information about the distribution of the test set. Also, different from a parametric model, when trained, the model can basically throw away all the training data, the Gaussian Process Regression model needs to store all the training data for prediction. For a parametric model, the goal is to find the predefined parametric relationship between features and targets, once done that, we don't need the training data for prediction. The features, ${\vec x^*_i | i=1,...,n^*}$, will give all the information we need for prediction $\vec y^*_i$'s. However, in Gaussian Process Regression model, the prediction eq. \ref{eq:pred3} and eq. \ref{eq:pred4} need the information from training set to get the posterior distribution of the test set.
 
 \subsection{Predicition from Gaussian Process Regression}\label{sec:decision_theory}
 Form eq. \ref{eq:pred3}, we know that the posterior distribution of test data is Gaussian with mean and variance given in eq.\ref{eq:pred4}. But if we want an explicit prediction for our target function rather than a distribution, what is the value then? One intuitive answer would be the mean of posterior distribution. In practice, this prediction is appropriate in most real-life tasks. There are in-depth explanation in \cite[Rasmussen and Williams, sec 2.4]{RandW}, we give a summary of the rationale in the following.
@@ -318,10 +328,16 @@ When modelling our target function as a zero mean Gaussian process regression(GP
 \begin{equation*} \label{}
 f(\vec x) \  \sim \ \GP\left(\vec 0,k(\vec{x},\vec{x'})  \right).
 \end{equation*}
-the main task will be to find a good configuration of covariance matrix, generated by kernel function $k$ and a set of hyperparameters that gives the best performance. In this section, we will discuss several aspects of model selection, namely covariance matrix, kernel functions, hyperparameters optimization.
+the main task will be to find a good configuration of covariance matrix, generated by kernel function $k$ and a set of $hyperparameters$ that gives the best performance. The model selection is a combination of choosing a good kernel function and optimizing $hyperparameters$ of the kernel function. In this section, we will discuss several aspects of model selection, namely covariance matrix, kernel functions, $hyperparameters$ optimization.
 
-\subsection{Likelihood of the training data}
-From eq. \ref{noise-free}, we know that the noise-free target value follow multivariate Gaussian distribution with mean $\vec 0$ and covariance $K(X,X)$. If we assume i.i.d. Gaussian noise, then we have $\vec y = f(\vec x) + \vec\epsilon$, where $\vec\epsilon \sim \mathcal{N}(\vec 0, \sigma^2_n)$. Let $K_y = K + \sigma^2_nI$, then by eq. \ref{cov_y}. we have
+\subsection{Marginal Likelihood of the training data}\label{lik}
+From eq. \ref{noise-free}, we know that the noise-free prior follow multivariate Gaussian distribution with mean $\vec 0$ and covariance $K(X,X)$. By Bayes' theorrm, the marginal likelihood of our noisy training data is the intergral of the likelihood times prior, whcih is 
+
+\begin{equation}
+     p(\vec y|X)\, = \, \int p(\vec y|\vec f, X)p(\vec f|X)d\vec f.
+\end{equation}
+
+The term \textit{marginal} likelihood means the marginalization over the function values $\vec f$. If we assume i.i.d. Gaussian noise, then we have $\vec y = f(\vec x) + \vec\epsilon$, where $\vec\epsilon \sim \mathcal{N}(\vec 0, \sigma^2_n)$. Let $K_y = K + \sigma^2_nI$, then by eq. \ref{cov_y}. we have
 \begin{equation}
 \vec y \  \sim \ \mathcal N \left(\vec 0,K_y  \right).
 \end{equation}
@@ -343,7 +359,13 @@ k(\vec x_n,\vec x_1) & k(\vec x_n,\vec x_2)& \dots& k(\vec x_n,\vec x_n)
 \end{bmatrix}
 \end{equation}
 
-ADD A GRAPH TO ILLUSTRATE A COVARIANCE MATRIX.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.4\linewidth]{cov1.png}
+	\vspace{2em}
+	\includegraphics[width=0.4\linewidth]{cov2.png}}
+	\caption{Covariance matrix}
+\end{figure}
 
 A kernel function in some sense measures the similarity between two data points in the input space. The basic assumption in GPR is that two points are close in the input space should be more likely to have a similar target value. 
 
@@ -364,26 +386,248 @@ Since a covariance matrix is always positive-semidefinite\footnotemark[1] and sy
 Kernel function map $\vec x,\vec x' \in \mathcal X$ into $\RR$. We measure the similarity of $\vec x,\vec x'$ in $\mathcal X$ by the result from the kernel function.
 
 A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. We write $k$ to take only single argument $\vec r = \vec x - \vec x'$. 
-\subsubsection*{Squared Exponential Kernel Function}
+\subsubsection*{Squared Exponential Kernel Functions}
 The mostly commonly used stationary kernel function is the \textit{squared exponential}(SE) kernel function, which has the form
-\begin{equation}
+\begin{equation}\label{SE_kernel}
 k_{SE}\, = \, \sigma^2\exp\left(-\frac{\vec r^2}{2l^2}\right),
 \end{equation}
-the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ controls the magnitude of function value. The \textit{squared exponential} kernel function is also known as the \textit{radial basis function}. 
+the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ controls the magnitude of function value. The \textit{squared exponential} kernel function is also known as the \textit{radial basis function}. This kernel function has derivatives at all orders, which means Gaussian process with this kernel will be very smooth. For detailed explanation, please see \cite[Rasmussen and Williams, sec 4.2]{RandW}. Sometimes, it is not very ideal to assume such strong smoothness for functions in real applications, so we introduce another family of stationary kernel functions, namely the \textit{Mat\'ern class}\cite[Stein]{Stein}.
 
-\subsubsection*{Matern Class of Kernel Functions}
+\subsubsection*{Mat\'ern Class of Kernel Functions}
+This class of kernel functions was named after the work of Mat\'ern. The general form of \textit{Matern class} kernel functions is given by
+\begin{equation}
+k_{Matern}(\vec r) = \frac{2^{1-\nu}}{\Gamma{(\nu)}}\left(\frac{\sqrt{2\nu}\vec r}{l}\right)^\nu K_\nu \left(\frac{\sqrt{2\nu}\vec r}{l}\right),
+\end{equation}
+where $\nu$ and $l$ are positive parameters and $K_\nu$ is a second kind modified Bessel function\cite[Abramowitz and Stegun]{Ab_St}. When $\nu \rightarrow \infty$, we obtain the SE kernel function. For smaller $\nu$, the resulting Gaussian process has a rougher path than those from a SE kernel. The most commonly exploited cases in machine learning is when $\nu = 3/2$ and $ 5/2$\cite[Rasmussen and Williams, sec 4.2]{RandW}. These two kernel functions are of the forms
+\begin{equation}
+\begin{split}
+k_{\nu = 3/2}(\vec r) &=\left(1+\frac{\sqrt{3}\vec r}{l}\right)\exp\left(-\frac{\sqrt{3}\vec r}{l}\right),\\
+k_{\nu = 5/2}(\vec r) &=\left(1+\frac{\sqrt{5}\vec r}{l}+\frac{5\vec r^2}{3l^2}\right)\exp\left(-\frac{\sqrt{5}\vec r}{l}\right).
+\end{split}
+\end{equation}
+For $\nu\geq 7/2$, the resulting Gaussian process will become very smooth\cite[Rasmussen and Williams, sec 4.2]{RandW}.
+
+ADD GRAPH TO ILLUSTRATE DIFFERENCE IN "SMOOTHNESS" BETWEEN DIFFERENT KERNELS
+
+Stationary kernels will give the same value as long as the difference between $\vec x$ and $\vec x'$ is the same. Hence, stationary kernels are translation invariant. When we want to incorporate effects of translation in feature space, we need to introduce non-stationary kernel functions.
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Training data metrics}
+		\label{tab:table1}
+		\begin{tabular}{c|c|c|c}
+			\mbox{Difference} & \mbox{RBF} & \mbox{Matern32}& \mbox{Matern52}\\ %\mbox{RBF + Linear}& \mbox{Matern32 + Linear}& \mbox{Matern52 + Linear}\\
+			\hline
+			10&47.94&58.51&56.10\\
+			100&74.13&	83.42&	81.23\\
+			1000&94.06&	98.35&	97.52\\
+			10000&99.96&	99.98&	99.98
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Testing data metrics}
+		\label{tab:table1}
+		\begin{tabular}{c|c|c|c}
+			\mbox{Difference} & \mbox{RBF} & \mbox{Matern32}& \mbox{Matern52}\\ %\mbox{RBF + Linear}& \mbox{Matern32 + Linear}& \mbox{Matern52 + Linear}\\
+			\hline
+			10&27.45&	30.76&	29.56\\
+			100&41.58&	44.59&	45.29\\
+			1000&65.83&	68.34&	68.44\\
+			10000&88.38&	88.08&	87.88
+		\end{tabular}
+	\end{center}
+\end{table}
 
 \subsubsection*{Linear Kernel Functions}
+A linear kernel function has the form
+\begin{equation}
+k_{Linear} = \frac{\vec x \cdot \vec x'}{l},
+\end{equation}
+where $l$ is the \textit{characteristic length-scale}.
 
+\subsubsection*{Combining Kernel Functions}
+For most real-life tasks, using vanilla kernel functions described above may not generate ideal result. We can construct new kernel functions from these vanilla kernel functions by addition, multiplication, convolution and other methods. Adding two kernel functions is equivalently modelling the resulting Gaussian process by the sum of two independent Gaussian processes\cite[Rasmussen and Williams, sec 4.2]{RandW}.
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Training data metrics}
+		\label{tab:table1}
+		\begin{tabular}{c|c|c|c}
+			\mbox{Difference} &\mbox{RBF+Linear}& \mbox{Matern32+Linear}& \mbox{Matern52+Linear}\\
+			\hline
+			10&31.30&	45.19&	18.25\\
+			100&56.18&	75.07&	34.17\\
+			1000&85.61&	96.25&	63.11\\
+			10000&99.63	&100.00	&90.27
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{Testing data metrics}
+		\label{tab:table1}
+		\begin{tabular}{c|c|c|c}
+			\mbox{Difference} &\mbox{RBF+Linear}& \mbox{Matern32+Linear}& \mbox{Matern52+Linear}\\
+			\hline
+			10&23.75&	28.36&	15.83\\
+			100&39.48&	41.98&	31.16\\
+			1000&65.23&	68.74&	56.81\\
+			10000&89.78&	90.28&	85.27
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+\subsubsection{Optimizing Kernel Parameters}
+Each kernel function has a set of parameters which determines properties of the kernel function. In Gaussian process regression, since these parameters specify distributions of the parameters of target function, so we call them $hyperparameters$ of the model. In the training process of our model, we want to find a optimal set of $hyperparameters$ in the sense that the log likelihood of our training data define in eq. \ref{log-likelihood} is maximised. We will discuss in detail about training methods in the following subsection.
 
 \subsection{Training Methods}
+In this subsection, we will suppose several objective functions for training and use gradient decent based algorithm for optimisation.
 
+\subsubsection{Maximum Likelihood}
+Recall from eq. \ref{log-likelihood}, we define the marginal likelihood of training data
+\begin{equation}
+\log p(\vec y|\vec X, \vec \theta)=-\frac{1}{2}\vec y^T K_y^{-1}\vec y-\frac{1}{2}\log|K_y| - \frac{n}{2}\log 2\pi,
+\end{equation}
+where $K_y = K_{\vec f}+\sigma^2 I$ is the covariance matrix for the noisy targets value $\vec y$. $K_f$ is the covariance matrix of latent function $\vec f$ and $\sigma^2$ is the variane of i.i.d. Gaussian noise. We can interpret the first term in the marginal likelihood $-\frac{1}{2}\vec y^T K_y^{-1}\vec y$ as the data-fit since it is the only term involves target values. The second term $-\frac{1}{2}\log|K_y|$ is the complexity penalty since it only depends on the covariance matrix. The third term $- \frac{n}{2}\log 2\pi$ is the normalization constant\cite[Rasmussen and Williams, sec 5.4]{RandW}. As \textit{length-scale} increases, $K_y^{-1}$ decreases and $\log|K_y|$ increases. So we want to find a set $\vec \theta$ such that
+
+\begin{equation}
+    \vec{\hat \theta} = \ \underset{\vec \theta \in \vec \Theta}{\mathrm{argmax}}\log p(\vec y|\vec X, \vec \theta).
+\end{equation}
+
+In practice, in order to find $\vec{\hat \theta}$ that maximises the log marginal likelihood, we first take partial derivatives of the the log marginal likelihood with respect to each element of the hyperparameter vector $\vec \theta$. Here, we use vector $\vec \theta$ to denote all the hyperparameters in our chosen kernel function.  Let $\vec \theta_i$ be $i^{th}$ element in $\vec \theta$, then the partial derivative of log marginal likelihood w.r.t. $\vec \theta_i$ is 
+\begin{equation}
+\begin{split}
+\frac{\partial}{\partial \vec \theta_i}\log p(\vec y|\vec X, \vec \theta) & = -\frac{1}{2}\vec y^T \frac{\partial K^{-1}}{\partial \vec \theta_i}\vec y-\frac{1}{2}\frac{\partial \log|K|}{\partial \vec \theta_i}\\
+& = -\frac{1}{2}\vec y^T\left(  -K^{-1} \frac{\partial K}{\partial \vec \theta_i} K^{-1} \right)\vec y - \frac{1}{2}\text{tr} \left(K^{-1}\frac{\partial K}{\partial\vec \theta_i}\right)\\
+&= \frac{1}{2}\vec y^TK^{-1} \frac{\partial K}{\partial \vec \theta_i} K^{-1} \vec y - \frac{1}{2}\text{tr} \left(K^{-1}\frac{\partial K}{\partial\vec \theta_i}\right)\\
+& = \frac{1}{2}\text{tr} \left( (\vec \alpha\alpha^T - K^{-1})\frac{\partial K}{\partial\vec \theta_i}\right) \text{, where } \vec \alpha = K^{-1} \vec y.
+\end{split}
+\end{equation}
+Notice that $\frac{\partial K}{\partial\vec \theta_i}$ denotes the matrix of element-wise derivatives. Then in each iteration, we update our the parameters $\vec\theta^n_i$ by
+\begin{equation}
+\vec\theta^n_i = \vec\theta^{n-1}_i - \eta\frac{\partial}{\partial \vec \theta_i}\log p(\vec y|\vec X, \vec \theta) 
+\end{equation}
+where $\eta$ is a predefined learning rate. 
+
+The main computational complexity of computing this partial derivative lies in the computing of $K^{-1}$, which is of order $\mathcal O(n^3)$ for a $n$ dimensional matrix $K$. After we have computed partial derivatives for every hyperparameters, we update each of them using a gradient decent based optimizer. Many well known packages in major programming languages have those optimizer built-in. We use Python for our implementation. One can find several more efficient optimizers such as RMSPropOptimizer and AdamOptimizer in Python. In practice, we will set our objective function to be the negative log likelihood, then we use optimizer to minimise our objective function w.r.t. hyperparameters. For those optimizers mentioned above, We can also use adaptive learning rate during optimising operation for better performance when approaching to the minimal point. By adaptive learning rate, we mean learning rate decays by a certain method. For instance, the time-based decay is specified by $\eta = \eta_0/(1+k*t)$, where $\eta_0$ is the initial learning rate, $k$ is a hyperpamater that governs the decay speed and $t$ is the iterations that have passed\cite[Bengio]{Bengio}.
+
+\subsubsection{LOO-CV Based Objective Functions}
+We can also define our objective function as the leave-one-out cross validation (LOO-CV) based predictive measure. Cross Validation (CV) baed predictive measure has been successfully used in many model selection tasks in machine learning\cite[Cawley and Talbot]{Cawley_Talbot}\cite[Sundararajan and Keerthi]{Sundararajan_Keerthi}. 
+
+Predictive Sample Reuse(PSR) methods was introduced by Geisser\cite{Geisser} to be applied for both model selection and parameters optimisation problem. The basic idea is to define a partition of training data $P(N,n,\Gamma)$ such that such that $P_{N-n}^i$ is the predictive probability of $i^{th}$ subset of size $n$ in the partition. Leave-one-out cross validation is the special case when we take the size of element in the partition to be $n=1$.
+
+The predictive log likelihood when leaving out training case $i$ is
+\begin{equation}\label{GPP_1}
+\log p(y_i|\vec X,\vec y_{-i},\vec \theta) = -\frac{1}{2}\log\sigma^2_i - \frac{(y_i - \mu_i)^2}{2\sigma^2_i} - \frac{1}{2} \log 2 \pi, 
+\end{equation}
+where $\vec y_{-i}$  means all targets value except the $i^{th}$ value, $\mu_i$ and $\sigma_i$ are calculated according to eq. \ref{eq:pred4}. The training data are taken to be $(\vec X_{-i},\vec y_{-i})$. We take our objective function to be the average negative predictive log likelihood, which is given by
+\begin{equation}\label{GPP}
+\begin{split}
+G(\vec X,\vec y, \vec \theta) &= -\frac{1}{n}\sum_{i=1}^{n}\log p(y_i|\vec X,\vec y_{-i},\vec \theta)\\
+\end{split}
+\end{equation}
+This objective function is known as Geisser's surrogate Predictive Probability(GPP), first supposed by Geisser and Eddy in \cite{Geisser_Eddy}. It is also called \textit{pseudo}-likelihood by Rasmussen and Williams in \cite[sec. 5.4]{RandW}. 
+
+The main computational cost in calculating GPP is in the calculation of the predictive mean $\mu_i$ and predictive variance $\sigma^2_i$, which are dominated by the inversion of the matrix $K$ in eq. \ref{eq:pred4}. The expression for $\mu_i$ and $\sigma^2_i$ was calculated in \cite{Sundararajan_Keerthi}, and they are
+\begin{equation}\label{GPP_2}
+\begin{split}
+\mu_i &= y_i - [K^{-1}\vec y]_i/[K^{-1}]_{ii},\\
+\sigma^2_i &= 1/[K^{-1}]_{ii}.
+\end{split}
+\end{equation}
+
+Plug in these expressions into eq. \ref{GPP_1} and eq. \ref{GPP} to get the objective function. The next step is to calculate the partial derivatives of the objective function with respect to hyperparameters. We first use the expression in eq. \ref{GPP_2} to calculate the partial derivatives of the predictive mean and variance
+\begin{equation}\label{GPP_3}
+\begin{split}
+\frac{\partial\mu_i}{\partial \vec \theta_j} &= \frac{[Z_j \vec \alpha]_i}{[K^{-1}]_{ii}} - \frac{\vec \alpha_i[Z_j K^{-1}]_{ii}}{[K^{-1}]^2_{ii}},\\
+\frac{\partial\sigma^2_i}{\partial \vec \theta_j} &= \frac{[Z_j K^{-1}]_{ii}}{[K^{-1}]^2_{ii}},
+\end{split}
+\end{equation}
+where $\vec \alpha = K^{-1}\vec y$ and $Z_j = K^{-1}\frac{\partial K}{\partial \vec \theta_j}$. Using chain rule and eq. \ref{GPP_1} to calculate the partial derivatives of eq.\ref{GPP}
+\begin{equation}\label{GPP_derivative}
+\begin{split}
+\frac{\partial G(\vec X,\vec y, \vec \theta)}{\partial \vec \theta_j} &= -\frac{1}{n}\sum_{i=1}^{n}\frac{\partial \log p(y_i|\vec X,\vec y_{-i},\vec \theta)}{\partial \mu_i}\frac{\partial \mu_i}{\partial \vec \theta_j} + \frac{\partial \log p(y_i|\vec X,\vec y_{-i},\vec \theta)}{\partial \sigma^2_i}\frac{\partial \sigma^2_i}{\partial \vec \theta_j}\\
+&=-\frac{1}{n}\sum_{i=1}^{n}\left(\alpha_i[Z_j \vec{\alpha}]_i - \frac{1}{2}\left(1+\frac{\alpha^2_i}{[K^{-1}]_{ii}}\right)[Z_j K^{-1}]_{ii}\right)/[K^{-1}]_{ii}.
+\end{split}
+\end{equation}
+With partial derivatives calculated, we can use gradient decent based optimizer to minimise our objective function $G(\vec X,\vec y, \vec \theta)$.
+
+Another LOO-CV based objective function is Geisser's Predictive mean square Error(GPE)\cite[Geisser and Eddy]{Geisser_Eddy}\cite[Sundararajan and Keerthi]{Sundararajan_Keerthi}. GPE is define by $\frac{1}{n}\sum_{i=1}^{n}\mathbb E[(y_i-\hat{y}_i)^2]$, where $\hat{y}_i$ is the predicted value from the model using data set $(\vec X_{-i}.\vec y_{-i})$ and $y_i$ is the true target value.The objective function corresponding to GPE is
+\begin{equation}\label{GPE}
+\begin{split}
+G_E(\vec X,\vec y, \vec \theta) = \frac{1}{n}\sum_{i=1}^{n}\int (y_i-\hat{y}_i)^2 p(\hat y_i|\vec X,\vec y_{-i},\vec \theta)d\hat y_i,
+\end{split}
+\end{equation}
+where $\hat y_i$ follows a Gaussian distribution with mean $\mu_i$ and variance $\sigma^2_i$ given by eq. \ref{GPP_2}. Thanks to the analytical tractability of Gaussian distribution, we can simplify the objective function as 
+\begin{equation}\label{GPE_1}
+G_E(\vec X,\vec y, \vec \theta) = \frac{1}{n}\sum_{i=1}^{n}(y_i-\mu_i)^2+\sigma^2_i.
+\end{equation}
+We can see from the expression of $G_E$, this objective function will aim to minimise the deviation between the predictive mean and the true value as well as the predictive variance. We can also use chain rule and eq. \ref{GPP_1} to calculate the partial derivatives of GPE objective function
+\begin{equation}\label{GPE_derivative}
+\frac{\partial G_E(\vec X,\vec y, \vec \theta)}{\partial \vec \theta_j} = \frac{1}{n}\sum_{i=1}^{n}\frac{\partial (y_i-\mu_i)^2}{\partial \mu_i}\frac{\partial \mu_i}{\partial \theta_j}+2\sigma_i\frac{\partial \sigma_i}{\partial \theta_j}.
+\end{equation}
+Plug in eq. \ref{GPP_3} to get
+\begin{equation}\label{GPE_derivative_2}
+\frac{\partial G_E(\vec X,\vec y, \vec \theta)}{\partial \vec \theta_j} = \frac{1}{n}\sum_{i=1}^{n}\left([Z_j K^{-1}]_{ii}\left(1+2\frac{\vec\alpha^2_i}{[K^{-1}]_{ii}}\right)-2\vec \alpha_i[Z_j\vec\alpha]_i\right)/[K^{-1}]_{ii},
+\end{equation}
+where $\vec \alpha = K^{-1}\vec y$ and $Z_j = K^{-1}\frac{\partial K}{\partial \vec \theta_j}$.
+
+Once we have calculated the partial derivatives, we just follow the similar steps in the maximum likelihood case to update the hyperparameters.
+
+The three objective proposed above have similar computational expense, all dominated by the inversion of covariance matrix $K$, which is $\mathcal O(n^3)$. The main difference is that maximum likelihood gives us the probability of training data given the assumption of model while the two LOO-CV based methods estimate the predictive probability and error which gives us a measure of how good is our assumption. 
+
+\subsubsection{Automatic Relevance Determination}
+In the previous discussion, we used single scalar value for the \textit{characteristic length-scale} $l$ in hyperparameter $\vec \theta$ for kernels functions. In practice, for multi-dimensional feature space, a universal \textit{characteristic length-scale} for all dimensions may not perform well. Instead, We can assign a \textit{characteristic length-scale} for each dimension. For instance, a SE kernel function in this form is
+\begin{equation}\label{SE_ARD}
+k_{SE\_ARD}\, = \, \sigma^2\exp\left(-\frac{1}{2}\sum_{i=1}^{d}\frac{\vec r^2_i}{ l^2_i}\right),
+\end{equation}
+where $\vec r \in \mathbb R^d$, $d$ is the number of dimensions in feature space. ARD stands for automatic relevance determination\cite[Neal]{Neal}. 
+From eq.\ref{SE_ARD}, we can see that the inverse of $l_i$ will determine how sensitive the covariance is to the change in $\vec r_i$. For large value of $l_i$, the inverse is close to zero which will make covariance all-most invariant to the change in $\vec r_i$. This effect will determine the relevance of $i^{th}$ dimension of input to the covariance, hence, the name -- automatic relevance determination(ARD).
 \newpage
+
 \section{Data Analysis}
 
 \subsection{Data Description}
 
 \subsection{Dimension Reduction}
+Due to the computational expense of calculating the inverse of covariance matrix, which is of order $\mathcal O(n^3)$ for a $n$-dimensional positive semi-definite matrix, it is hard to work with large data set in practice. However, for high dimensional input, we have to train our model with a reasonably large amount of data so that on average each dimension is adequately represented. To tackle this dilemma, we need to reduce the dimension of feature space while retaining the information from the original data. In this subsection, we will present two dimension reduction techniques, namely Principal Component Analysis(PCA) and Autoencoder(AE). 
+
+\subsubsection{Principal Component Analysis}
+Principal Component Analysis(PCA) is used extensively in statistics for data presentation and dimension reduction. The main purpose of PCA is to find a new coordinate system in which we can express the original data with less dimensions without significant loss of information. We will briefly explanation how PCA works in the following. For detailed discuss about PCA, please see \cite[Jolliffe]{Jolliffe}.
+
+To perform PCA, we first need to standardize the data by subtracting mean and dividing standard deviation. Then calculate the sample covariance matrix of the input data $\vec Q = \frac{1}{n-1}\vec X\vec X^T$, where each column of $\vec X$ is one data point in original input space, $\mathbb R^d$. Then find the eigenvalues $\lambda_1, \cdots,\lambda_d$ of $\vec Q$ and corresponding orthogonal eigenvectors $\vec u_1,\cdots,\vec u_d$. Then sort the eigenvalues in descending order and corresponding eigenvectors. The eigenvector corresponding to the largest eigenvalue is called first \textit{principal component} and so on. To reduce dimensions, we discard those eigenvectors corresponding to eigenvalues that are smaller than a predefined threshold(small eigenvalues correspond to eigenvectors containing less information about the original data). Now we have chosen $k$($<d$) eigenvectors to form our feature matrix $\vec U$ which is of shape $k\times d$. The dimension reduction is done by multiplying $\vec X$ by $\vec U$ from left,
+\begin{equation}
+\vec X' = \vec U \cdot \vec X
+\end{equation}
+where $\vec X'$ is a $k\times n$ matrix with each column a transformed data point in reduced input space $\mathbb R^k$.
+
+\subsubsection{Autoencoder}
+An autoencoder is a type of feed forward neural network that is mainly used for efficient data encoding\cite[chapter 14]{Deep_Learning}. The most simple case of autoencoder contains three layers, namely input layer, hidden layer and output layer. This type of autoencoder can be divided into two parts: an encoder function and a decoder function. An encoder function takes the original data as input and transform it to a transformed space. Denote the encoder as $\vec h = f(\vec x)$, where $\vec x\in \mathbb R^d, \vec h\in \mathbb R^m$. A decoder function takes $\vec h$ as input and outputs a reconstruction of the original data $\vec x' = g(\vec h)$. We train the model by minimize the reconstruction error between $\vec x$ and $\vec x'$. Commonly used reconstruction error measure is the Mean Squared Error loss function $L(\vec x,\vec x') = \frac{1}{n}\sum_{i=1}^{n}(\vec x_i-\vec x'_i)^2$. 
+
+When $m<d$, it means the encoder function transforms the original data into a lower dimensional space and the decoder function can recover the original data from the transformed space within a tolerable error range. This type of autoencoders is called \textit{undercomplete autoencoders}(hidden layer dimension smaller than input dimension) and is widely used as a dimension reduction tool. By setting the hidden layer size smaller than the input dimension and minimizing the reconstruction error, we force the autoencoder to learn important transformation of original features.
+When the activation function used in the encoder part is linear, i.e. $f(\vec x) = \vec w\cdot\vec x + b$, and the hidden layer is fully connected, the subspace spanned by the autoencoder is the same as the one spanned by principal components from PCA. Detailed discussion and proof can be found in \cite[Plaut]{Plaut}.
+
+When the activation function is non-linear, e.g. the logistic function
+\begin{equation}
+\begin{split}
+f(\vec x) &= \frac{1}{1+\exp[-(\vec w\cdot\vec x + b)]},\\
+g(\vec h) &= \frac{1}{1+\exp[-(\vec w'\cdot\vec h + b')]},
+\end{split}
+\end{equation}
+where $\vec w, b$ and $\vec w', b'$ are weights and bias of the encoder and decoder function, the autoencoder can learn a more useful non-linear generalization of the one generated by PCA. After the training process, we can discard the decoder part and only apply the encoder function to the whole data set for dimension reduction purpose.
+
+Apart from dimension reduction, we can also add denoising feature to the autoencoder by feed the model with \textit{noisy} data, then try to reconstruct the \textit{clean} data. This type of autoencoders are called \textit{denoising autoencoders}. 
+
+In a denoising autoencoder, a random noise, usually Gaussian noise, is added to the original data $\vec x$ to get noisy data $\hat{\vec x}$. Then apply the encoder function and decode function to get $\hat{\vec h} = f(\vec x)$  and $\vec{\hat x'} = g(\hat{\vec h})$. The loss function is defined as Mean Squared Error between the reconstructed $\vec{\hat x'}$ and the original data $\vec x$. The training process it to minimize $L(\vec x,\vec{\hat x'})$. 
+
+ADD SCHEMATIC GRAPH FOR UNDERCOMPLETE AND DENOISING AUTOENCODER
+
+
 
 \subsection{Approximation for Large Dataset}
 
@@ -398,6 +642,18 @@ the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ contr
 
 \newpage
 \section{Conclusion, Discussion and Further Study}
+
+EXPAND LATER
+
+using different kernel functions on different dimensions of the input, based on their different distribution.
+
+deep Gaussian process
+
+combine GPR and Kalman Filter, use GPR to produce measure and variance for hidden state estimation update in kalman filter
+
+use GPR to bootstrap yield curve
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %
@@ -672,6 +928,49 @@ MIT Press, 2006.
 \textit{Statistical Decision Theory and Bayesian Analysis}. 
 Springer, New York. Second edition. 1985. pp.22,35
 
+\bibitem{Stein}M. L. Stein.
+\textit{Interpolation of Spatial Data}. 
+Springer-Verlag, New York. 1999. pp. 82, 83, 85, 86, 87, 115, 1371 157, 158, 161, 212
+
+\bibitem{Ab_St}M. Abramowitz and I. A. Stegun.
+\textit{Handbook of Mathematical Functions}. 
+Dover, New York. 1965. pp. 84,85
+
+\bibitem{Bengio}Yoshua Bengio.
+\textit{Practical Recommendations for Gradient-Based Training of Deep Architectures}. 
+https://arxiv.org/pdf/1206.5533v2.pdf, 2012
+
+\bibitem{Cawley_Talbot}G. C. Cawley and N. L. C. Talbot.
+\textit{Fast Exact Leave-one-out Cross Validation of Sparse Least Squares Support Vector Machines}. 
+Neural Networks, 17(10): 1467-1475, 2004
+
+\bibitem{Sundararajan_Keerthi}S. Sundararajan and S. S. Keerthi.
+\textit{Predictive Approaches for Choosing Hyperparameters in Gaussian Process}. 
+Neural Computation, 13:1103-1118, 2004
+
+\bibitem{Geisser}S. Geisser.
+\textit{The Predictive Sample Reuse Method with Applications}. 
+Journal of the American Statistical Association, 70, 320-328, 1975
+
+\bibitem{Geisser_Eddy}S. Geisser. and W. F. Eddy.
+\textit{A Predictive Approach to Model Selection}. 
+Journal of the American Statistical Association, 74, 153-160, 1979
+
+\bibitem{Neal}M. Neal.
+\textit{Bayesian Learning for Neural Networks}. 
+Springer, New York. Lecture Notes in Statistics 118. 1996
+
+\bibitem{Jolliffe}I. T. Jolliffe.
+\textit{Principal Component Analysis}. 
+Springer, New York. second edition. 2002
+
+\bibitem{Plaut}Elad Plaut.
+\textit{From Principal Subspaces to Principal Components with Linear Autoencoders}. 
+https://arxiv.org/pdf/1804.10253.pdf. 2018
+
+\bibitem{Deep_Learning}Ian Goodfellow, Yoshua Bengio and Aaron Courvillet.
+\textit{Deep Learning}. 
+MIT Press. http://www.deeplearningbook.org. 2016
 %\bibitem{BS73}F.~ Black and M.~Scholes.
 %The Pricing of Options and Corporate Liabilities.
 %\textit{Journal of Political Economy}, {\tt 81}(3): 637-659, 1973.
