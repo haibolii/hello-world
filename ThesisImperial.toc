@@ -1,0 +1,27 @@
+\contentsline {section}{\numberline {1}Introduction}{6}{section.1}
+\contentsline {subsection}{\numberline {1.1}CDS, CDD and Synthetic CDO}{6}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Machine Learning for pricing -- Gaussian Process Regression}{9}{subsection.1.2}
+\contentsline {section}{\numberline {2}Gaussian Process}{10}{section.2}
+\contentsline {subsection}{\numberline {2.1}Introduction to Gaussian Process}{10}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Gaussian Process Regression}{12}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Weight-space View}{12}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Function-space View}{14}{subsubsection.2.2.2}
+\contentsline {subsection}{\numberline {2.3}Predicition from Gaussian Process Regression}{20}{subsection.2.3}
+\contentsline {section}{\numberline {3}Model Selection}{22}{section.3}
+\contentsline {subsection}{\numberline {3.1}Marginal Likelihood of the training data}{22}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Covariance Matrix and Kernel functions}{23}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Several Common Kernel functions}{24}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Optimizing Kernel Parameters}{28}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.3}Numerical Results of Different Kernels}{28}{subsubsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.4}Automatic Relevance Determination}{29}{subsubsection.3.2.4}
+\contentsline {subsection}{\numberline {3.3}Training Methods}{31}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Maximum Likelihood(ML)}{31}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}LOO-CV Based Objective Functions}{33}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Numerical Results}{36}{subsubsection.3.3.3}
+\contentsline {section}{\numberline {4}Data Analysis}{38}{section.4}
+\contentsline {subsection}{\numberline {4.1}Data Description}{38}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Dimension Reduction}{38}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Principal Component Analysis}{39}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Autoencoder}{40}{subsubsection.4.2.2}
+\contentsline {subsection}{\numberline {4.3}Numerical Results}{41}{subsection.4.3}
+\contentsline {section}{\numberline {5}Conclusion, Discussion and Further Study}{46}{section.5}

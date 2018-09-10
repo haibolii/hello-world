@@ -1,0 +1,172 @@
+\relax 
+\ifx\hyper@anchor\@undefined
+\global \let \oldcontentsline\contentsline
+\gdef \contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global \let \oldnewlabel\newlabel
+\gdef \newlabel#1#2{\newlabelxx{#1}#2}
+\gdef \newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\let \contentsline\oldcontentsline
+\let \newlabel\oldnewlabel}
+\else
+\global \let \hyper@last\relax 
+\fi
+
+\@input{ThesisFrontPage.aux}
+\@input{ThesisAcknowledgements.aux}
+\citation{Elouerkhaoui}
+\citation{okane}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{6}{section.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}CDS, CDD and Synthetic CDO}{6}{subsection.1.1}}
+\citation{okane}
+\citation{okane}
+\citation{Elouerkhaoui}
+\citation{okane}
+\citation{matheron}
+\citation{JandH}
+\citation{WandR_1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Machine Learning for pricing -- Gaussian Process Regression}{9}{subsection.1.2}}
+\citation{Lalley}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Gaussian Process}{10}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Introduction to Gaussian Process}{10}{subsection.2.1}}
+\newlabel{def:gp}{{2.1}{10}{Introduction to Gaussian Process\relax }{theorem.2.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The upper panel is the $prior$ of a Gaussian Process with its parameters set at initial value. The bold black line is the mean, which in our example is constantly zero. The colored lines are sample functions drawn from this Gaussian Process. Grey area is one standard deviation away from the mean at each input point. The lower panel is the $posterior$. The dots on the black line are our observations. Colored lines are sample functions drawn from the $posterior$ distribution. Grey area is one standard deviation away from the mean. Notice that once we have our observation, we are more certain about the function value around obserced points. This is illustrated by the shrinking of the grey area in the lower panel.\relax }}{11}{figure.caption.2}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:gp}{{1}{11}{The upper panel is the $prior$ of a Gaussian Process with its parameters set at initial value. The bold black line is the mean, which in our example is constantly zero. The colored lines are sample functions drawn from this Gaussian Process. Grey area is one standard deviation away from the mean at each input point. The lower panel is the $posterior$. The dots on the black line are our observations. Colored lines are sample functions drawn from the $posterior$ distribution. Grey area is one standard deviation away from the mean. Notice that once we have our observation, we are more certain about the function value around obserced points. This is illustrated by the shrinking of the grey area in the lower panel.\relax \relax }{figure.caption.2}{}}
+\citation{RandW}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Gaussian Process Regression}{12}{subsection.2.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Weight-space View}{12}{subsubsection.2.2.1}}
+\newlabel{weight_space_pred}{{2.8}{13}{Weight-space View\relax }{equation.2.8}{}}
+\citation{Papoulis}
+\citation{RandW}
+\newlabel{weight_space_pred_2}{{2.11}{14}{Weight-space View\relax }{equation.2.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Function-space View}{14}{subsubsection.2.2.2}}
+\newlabel{noise-free}{{2.16}{17}{Function-space View\relax }{equation.2.16}{}}
+\newlabel{eq:pred1}{{2.18}{17}{Function-space View\relax }{equation.2.18}{}}
+\newlabel{eq:pred2}{{2.19}{17}{Function-space View\relax }{equation.2.19}{}}
+\newlabel{conditional_pdf}{{2.20}{17}{Function-space View\relax }{equation.2.20}{}}
+\newlabel{cov_y}{{2.29}{19}{Function-space View\relax }{equation.2.29}{}}
+\newlabel{eq:pred3}{{2.31}{19}{Function-space View\relax }{equation.2.31}{}}
+\newlabel{eq:pred4}{{2.32}{19}{Function-space View\relax }{equation.2.32}{}}
+\citation{RandW}
+\citation{RandW}
+\citation{Berger}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Predicition from Gaussian Process Regression}{20}{subsection.2.3}}
+\newlabel{sec:decision_theory}{{2.3}{20}{Predicition from Gaussian Process Regression\relax }{subsection.2.3}{}}
+\newlabel{loss1}{{2.33}{20}{Predicition from Gaussian Process Regression\relax }{equation.2.33}{}}
+\newlabel{loss2}{{2.3}{20}{Predicition from Gaussian Process Regression\relax }{equation.2.33}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Model Selection}{22}{section.3}}
+\newlabel{sec:model_selection}{{3}{22}{Model Selection\relax }{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Marginal Likelihood of the training data}{22}{subsection.3.1}}
+\newlabel{lik}{{3.1}{22}{Marginal Likelihood of the training data\relax }{subsection.3.1}{}}
+\newlabel{log-likelihood}{{3.3}{22}{Marginal Likelihood of the training data\relax }{equation.3.3}{}}
+\citation{RandW}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Covariance Matrix and Kernel functions}{23}{subsection.3.2}}
+\newlabel{subsec:kernel_func}{{3.2}{23}{Covariance Matrix and Kernel functions\relax }{subsection.3.2}{}}
+\newlabel{cov_mat}{{3.4}{23}{Covariance Matrix and Kernel functions\relax }{equation.3.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Covariance matrix, the left panel is the covarianve matrix $K$ of the training data $\mathbf  X$. The diagonal component $K_{ii}$ is the variance of $\mathbf  X_i$, the off-diagonal component $K_{ij}$ is the covariance between $\mathbf  X_i$ and $\mathbf  X_j$. The right panel is the cross-covariance $K^*$ of $\mathbf  X$ and testing data $\mathbf  X^*$. $K^*_{ij}$ is the covariance between $\mathbf  X_i$ and $\mathbf  X^*_j$.\relax }}{23}{figure.caption.3}}
+\citation{RandW}
+\citation{Stein}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Several Common Kernel functions}{24}{subsubsection.3.2.1}}
+\newlabel{RBF}{{3.5}{24}{Radial Basis Function Kernel\relax }{equation.3.5}{}}
+\citation{Ab_St}
+\citation{RandW}
+\citation{RandW}
+\citation{RandW}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces GP Priors with different kernels. For staiontionary kernels e.g. RBF, Matern32 and Matern53, variance at each point(covariance with itself) is constant for fixed parameters. For non-stationary kernel, e.g. Linear kernel, variance increases as data points move away from the origin. We can also see that sample functions drawn from $prior$ distribution of different kernels show different level of smoothness. Sample functions draw from Linear kernel are linear functions.\relax }}{26}{figure.caption.6}}
+\newlabel{fig:gp_diff_kernels}{{3}{26}{GP Priors with different kernels. For staiontionary kernels e.g. RBF, Matern32 and Matern53, variance at each point(covariance with itself) is constant for fixed parameters. For non-stationary kernel, e.g. Linear kernel, variance increases as data points move away from the origin. We can also see that sample functions drawn from $prior$ distribution of different kernels show different level of smoothness. Sample functions draw from Linear kernel are linear functions.\relax \relax }{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces GP Posteriors with different kernels. The red dots are the training points. The black line is the mean function, the grey area is 95\% confidence intervel.\relax }}{27}{figure.caption.8}}
+\newlabel{fig:gp_diff_kernels_2}{{4}{27}{GP Posteriors with different kernels. The red dots are the training points. The black line is the mean function, the grey area is 95\% confidence intervel.\relax \relax }{figure.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces GP $prior$ and $posterior$ with RBF+Linear kernel. The mean function from the $postetior$ distribution has a upwards trend and local variation.\relax }}{28}{figure.caption.10}}
+\newlabel{fig:gp_kernel_combo}{{5}{28}{GP $prior$ and $posterior$ with RBF+Linear kernel. The mean function from the $postetior$ distribution has a upwards trend and local variation.\relax \relax }{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}Optimizing Kernel Parameters}{28}{subsubsection.3.2.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}Numerical Results of Different Kernels}{28}{subsubsection.3.2.3}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Results for kernels with single value length-scale. \relax }}{29}{table.caption.11}}
+\newlabel{table:res_single_lengthscale}{{1}{29}{Results for kernels with single value length-scale. \relax \relax }{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.4}Automatic Relevance Determination}{29}{subsubsection.3.2.4}}
+\citation{Neal}
+\newlabel{RBF_ARD}{{3.9}{30}{Automatic Relevance Determination\relax }{equation.3.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Results for ARD kernels\relax }}{30}{table.caption.12}}
+\newlabel{ARD_res}{{2}{30}{Results for ARD kernels\relax \relax }{table.caption.12}{}}
+\citation{RandW}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Absolute difference on testing set with ARD kernels. Kernels with ARD consistently give better results than kernels without ARD.\relax }}{31}{figure.caption.13}}
+\newlabel{ARD_diff}{{6}{31}{Absolute difference on testing set with ARD kernels. Kernels with ARD consistently give better results than kernels without ARD.\relax \relax }{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Training Methods}{31}{subsection.3.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Maximum Likelihood(ML)}{31}{subsubsection.3.3.1}}
+\citation{Bengio}
+\citation{Cawley_Talbot}
+\citation{Sundararajan_Keerthi}
+\citation{Geisser}
+\citation{Geisser_Eddy}
+\citation{RandW}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.2}LOO-CV Based Objective Functions}{33}{subsubsection.3.3.2}}
+\newlabel{GPP_1}{{3.14}{33}{Geisser's surrogate Predictive Probability(GPP)\relax }{equation.3.14}{}}
+\newlabel{GPP}{{3.15}{33}{Geisser's surrogate Predictive Probability(GPP)\relax }{equation.3.15}{}}
+\citation{Sundararajan_Keerthi}
+\citation{Geisser_Eddy}
+\citation{Sundararajan_Keerthi}
+\newlabel{GPP_2}{{3.16}{34}{Geisser's surrogate Predictive Probability(GPP)\relax }{equation.3.16}{}}
+\newlabel{GPP_3}{{3.17}{34}{Geisser's surrogate Predictive Probability(GPP)\relax }{equation.3.17}{}}
+\newlabel{GPP_derivative}{{3.18}{34}{Geisser's surrogate Predictive Probability(GPP)\relax }{equation.3.18}{}}
+\newlabel{GPE}{{3.21}{35}{Geisser's Predictive mean square Error (GPE)\relax }{equation.3.21}{}}
+\newlabel{GPE_1}{{3.22}{35}{Geisser's Predictive mean square Error (GPE)\relax }{equation.3.22}{}}
+\newlabel{GPE_derivative}{{3.23}{35}{Geisser's Predictive mean square Error (GPE)\relax }{equation.3.23}{}}
+\newlabel{GPE_derivative_2}{{3.24}{35}{Geisser's Predictive mean square Error (GPE)\relax }{equation.3.24}{}}
+\citation{Sundararajan_Keerthi}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.3}Numerical Results}{36}{subsubsection.3.3.3}}
+\newlabel{subsec:num_res}{{3.3.3}{36}{Numerical Results\relax }{subsubsection.3.3.3}{}}
+\newlabel{reparameterized_GPE}{{3.26}{36}{Numerical Results\relax }{equation.3.26}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Different training methods for RBF kernel\relax }}{37}{table.caption.16}}
+\newlabel{multitrain_rbf}{{3}{37}{Different training methods for RBF kernel\relax \relax }{table.caption.16}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Different training methods for Matern32 kernel\relax }}{37}{table.caption.17}}
+\newlabel{multitrain_matern32}{{4}{37}{Different training methods for Matern32 kernel\relax \relax }{table.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Different training methods for Matern52 kernel\relax }}{37}{table.caption.18}}
+\newlabel{multitrain_matern52}{{5}{37}{Different training methods for Matern52 kernel\relax \relax }{table.caption.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Training time per iteration of entire dataset from different methods. Algorithm is implemented using Python 3.5 and Tensorflow packge. Run on machine with CPU: Intel Xeon E5-2620 v4 2.10GHz, RAM: 32.0GB.\relax }}{37}{table.caption.19}}
+\newlabel{training_time}{{6}{37}{Training time per iteration of entire dataset from different methods. Algorithm is implemented using Python 3.5 and Tensorflow packge. Run on machine with CPU: Intel Xeon E5-2620 v4 2.10GHz, RAM: 32.0GB.\relax \relax }{table.caption.19}{}}
+\citation{Kotsiantis}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Data Analysis}{38}{section.4}}
+\newlabel{sec:data_analysis}{{4}{38}{Data Analysis\relax }{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Data Description}{38}{subsection.4.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Dimension Reduction}{38}{subsection.4.2}}
+\citation{Jolliffe}
+\citation{Deep_Learning}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}Principal Component Analysis}{39}{subsubsection.4.2.1}}
+\citation{Plaut}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}Autoencoder}{40}{subsubsection.4.2.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Undercomplete Autoencoder Training Scheme. In an undercomplete autoencoder, number of neurons in the hidden layer is smaller than the number of input dimension.\relax }}{40}{figure.caption.20}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Numerical Results}{41}{subsection.4.3}}
+\newlabel{sec:data_ana_res}{{4.3}{41}{Numerical Results\relax }{subsection.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Denoising Autoencoder Training Scheme. Manually add noise to the original data before feeding into the AE.\relax }}{42}{figure.caption.21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Training Process of Different AE Size. All sizes converge at similar speed, the MSE differences between 4000 and 10000 iterations are subtle. AEs with fewer hidden nodes(128,64,32,16) are able to reconstruct the original data with less error than AE with 256 hidden nodes.\relax }}{43}{figure.caption.22}}
+\newlabel{ae_res}{{9}{43}{Training Process of Different AE Size. All sizes converge at similar speed, the MSE differences between 4000 and 10000 iterations are subtle. AEs with fewer hidden nodes(128,64,32,16) are able to reconstruct the original data with less error than AE with 256 hidden nodes.\relax \relax }{figure.caption.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Training Results at 2000 Epochs. Reconstuction error is at lowest when the AE has 32 hidden nodes. \relax }}{43}{figure.caption.23}}
+\newlabel{ae_res_1}{{10}{43}{Training Results at 2000 Epochs. Reconstuction error is at lowest when the AE has 32 hidden nodes. \relax \relax }{figure.caption.23}{}}
+\newlabel{RF1}{45}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Autoencoder and PCA results of RBF and Matern32 kernels; the numbers, 128, 64, ..., mean the number of neurons in the hidden layer of an undercomplete autoencoder. PCA 99\% means sum of chosen eigenvalues is 99\% of the sum of total eigenvalues. Results from AEs are consistently better than those from PCA. This means linear transformation used in PCA is not able to retain as much information as non-linear transformation in AEs. Adding the hidden nodes in AE does not necessarily improve prediction performance from GPR model.\relax }}{45}{table.caption.24}}
+\newlabel{dim_red_res}{{7}{45}{Autoencoder and PCA results of RBF and Matern32 kernels; the numbers, 128, 64, ..., mean the number of neurons in the hidden layer of an undercomplete autoencoder. PCA 99\% means sum of chosen eigenvalues is 99\% of the sum of total eigenvalues. Results from AEs are consistently better than those from PCA. This means linear transformation used in PCA is not able to retain as much information as non-linear transformation in AEs. Adding the hidden nodes in AE does not necessarily improve prediction performance from GPR model.\relax \relax }{table.caption.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion, Discussion and Further Study}{46}{section.5}}
+\bibcite{Elouerkhaoui}{1}
+\bibcite{Brigo}{2}
+\bibcite{okane}{3}
+\bibcite{matheron}{4}
+\bibcite{JandH}{5}
+\bibcite{WandR_1}{6}
+\bibcite{Lalley}{7}
+\bibcite{Papoulis}{8}
+\bibcite{RandW}{9}
+\bibcite{Berger}{10}
+\bibcite{Stein}{11}
+\bibcite{Ab_St}{12}
+\bibcite{Bengio}{13}
+\bibcite{Cawley_Talbot}{14}
+\bibcite{Sundararajan_Keerthi}{15}
+\bibcite{Geisser}{16}
+\bibcite{Geisser_Eddy}{17}
+\bibcite{Neal}{18}
+\bibcite{Jolliffe}{19}
+\bibcite{Plaut}{20}
+\bibcite{Deep_Learning}{21}
+\bibcite{Kotsiantis}{22}
+\bibcite{Jolliffe_1}{23}
+\bibcite{press}{24}
+\citation{press}
