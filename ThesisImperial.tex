@@ -98,10 +98,10 @@
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\section{Introduction}
-	One of the challenges in financial derivatives pricing is calibrating curves from market data and running a large number of Monte Carlo simulations to price more exotic products. This process can take a lot of time especially when we want to price structured products with a lot of underlyings. One way to tackle this problem can be using a trained machine learning model to replicate the price we want instantly without doing all the calibrating and simulations. In this paper, we will investigate one class of regression model, namely Gaussian Process Regression(GPR) to replicate the price of one particular structured product, namely Synthetic Collateralized Debt Obligation.
+	One of the challenges in financial derivatives pricing is calibrating curves from market data and running a large number of Monte Carlo simulations to price more exotic products. This process is usually very time consuming especially when a  structured product with a lot of underlyings is priced. One way to tackle this problem  is using a trained machine learning model to replicate the price without doing all the calibrating and simulations. In this paper, one class of regression model, the Gaussian Process Regression(GPR) is investigated for replicating the price of one particular structured product, namely Synthetic Collateralized Debt Obligation.
 	
 	\subsection{CDS, CDD and Synthetic CDO}
-	The focus of this paper is not to present the mathematical sophistication behind the pricing models which have already been extensively studied in numerous previous works. We will only briefly introduce the pricing mechanism of Credit Default Swap(CDS), Collateralized Debt Obligation(CDO) and Synthetic CDO. A thorough discussion about the mathematical details of the pricing formula is out of the scope of this paper. We refer the reader to Elouerkhaoui's book\cite{Elouerkhaoui} and O'Kane's book\cite{okane} for more details about credit derivatives.
+	The focus of this paper is not to present the mathematical sophistication behind the pricing models which have already been extensively studied in numerous works in the past. The following paragraphs will only briefly introduce the pricing mechanism of Credit Default Swap(CDS), Collateralized Debt Obligation(CDO) and Synthetic CDO. A thorough discussion about the mathematical details of the pricing formula is out of the scope of this paper. More details about credit derivatives can be found in Elouerkhaoui's book\cite{Elouerkhaoui} and O'Kane's book\cite{okane}.
 	
 	A CDS contract provides protection against default. Typically, in a CDS contract, there are protection buyer, protection seller and the reference entity. Like in an insurance contract, the protection buyer pays the premium leg to the protection seller given there is no default; the protection seller pays the protection leg to the protection buyer if the reference entity defaults before the maturity of the contract. 
 	Assume face value of $\$1$, the present value(PV) of a CDS is the difference between PV of the premium leg  and protection leg. The PV of premium leg and protection leg are given by
@@ -127,7 +127,7 @@
 	\begin{equation}
 	\text{Premium PV} = S(K_1,K_2)\sum_{i=1}^{N_T}\Delta(t_{i-1},t_i)Z(t_i)\mathbb E[1-L(t_i, K_1, K_2)],
 	\end{equation}
-	where $Z(t_i)$ is the Libor discount curve; $t_i, n = 1,...,T_N$ are the premium payment dates; $\Delta(t_{i-1},t_i)$ is the day count fraction between $t_{i-1}$ and $t_i$. Here we assume that the premium paid at time $t_i$ is on the tranche notional value at $t_i$. One useful approximation would be taking the tranche notional as the average tranche notional since last premium payment. Then we get
+	where $Z(t_i)$ is the Libor discount curve; $t_i, n = 1,...,T_N$ are the premium payment dates; $\Delta(t_{i-1},t_i)$ is the day count fraction between $t_{i-1}$ and $t_i$. Here we assume that the premium paid at time $t_i$ is on the tranche notional value at $t_i$. One useful approximation would be taking the tranche notional as the average tranche notional since last premium payment. Then one gets
 	\begin{equation}
 	\text{Premium PV} = S(K_1,K_2)\sum_{i=1}^{N_T}\Delta(t_{i-1},t_i)Z(t_i)\mathbb E\left[1-\frac{L(t_{i-1}, K_1, K_2)+L(t_i, K_1, K_2)}{2}\right],
 	\end{equation}
@@ -157,46 +157,45 @@
 	&-\int_{0}^{T}Z(s)(-dQ(s,K_1,K_2)).
 	\end{split}
 	\end{equation}
-	For a detailed discussion about pricing mechanism for CDOs, we prefer the reader to \cite[chapter 12]{okane}. 
+	For a detailed discussion about pricing mechanism for CDOs,  please see chapter 12 in \cite{okane}. 
 	
 	The loss distribution of a CDO tranche will depend on the correlation of the underlying credits. When the correlation is zero, the underlying credits are independent which means they do not tend to survive or default together. When the correlation is high, the underlying credits become more likely to survive or default together. There are several methods to model the credit correlation, see \cite{Elouerkhaoui} and \cite[Part II]{okane}.
 	
-	Calibrating the correlation models to market data is hard because of a number of reasons. To begin with, the default of a credit is a rare event which means we do not have a lot of historical data. Second, there are hundreds of credits underlying a CDO, we need to do a tremendous amount of Monte Carlo simulations which can be very time-consuming. To provide an alternative way of price those structured products, we propose a machine learning method -- Gaussian Process Regression.
+	Calibrating the correlation models to market data could be challenging for a number of reasons. To begin with, the default of a credit is a rare event so historical data is hard to acquire. Secondly, there are hundreds of credits underlying a CDO, one needs to do a tremendous amount of Monte Carlo simulations which can be very time-consuming. To provide an alternative way of pricing those structured products, this paper proposes a machine learning method -- Gaussian Process Regression.
 	
 	\subsection{Machine Learning for pricing -- Gaussian Process Regression}
-	In this paper, we will thoroughly discuss Gaussian Process Regression(GPR) as an alternative approach to price structured products. The basic idea of GPR is to measure the similarity within the feature space spanned by all the inputs from the traditional pricing techniques, then replicate prices based on the similarity to the training data. We will explain how this works in section $2$ in more detail. In section $3$, we will examine several model selection techniques in the Gaussian Process settings including different kernel functions and objective functions for training purposes. In section $4$, we will present dimension reduction methods and compare the results from them. The thesis will be concluded by section 5 with conclusion, discussion and further study.
+	In this paper, an alternative approach to price structured products -- Gaussian Process Regression(GPR) -- is proposed. The basic idea of GPR is to measure the similarity within the feature space spanned by all the inputs from the traditional pricing techniques, then replicate prices based on the similarity to the training data. A detailed explanation about how this works will be provided in section $2$. Detailed discussions will be presented in section $3$ to examine several model selection techniques in the Gaussian Process settings including different kernel functions and objective functions for training purposes.  Section $4$ contains two dimension reduction methods and comparison between the results from them. The thesis will be concluded by section 5 with conclusion, discussion and further study.
 	
 	Modelling regression problems using Gaussian process is well known in the geostatistics field\cite{matheron,JandH}, but the studied has only focused on small input dimensions e.g. 2-dimensional and 3-dimensional input spaces. GPR under machine learning context was first studied by Williams and Rasmussen in \cite{WandR_1}. They also described how to optimize parameters in the covariance matrix, which will be discussed in the following section. Other previous works are also focused on lower dimensional input space, so it will be of interest to see how GPR can be used in replicating synthetic CDO prices with much higher dimensional input space. The data used in numerical implementation is Citigroup proprietary data with input dimension of 1118. The numerical results are all produced from this dataset unless otherwise stated.
-	
 	
 	\newpage
 	\section{Gaussian Process}
 	
-	There are broadly two common approaches when it comes to supervised machine learning. One is to assume a specific class of functions that we want to learn, then train the model to learn the parameters that describe that specific function. The other approach is to assign a $prior$ probability to all the possible functions, then choose the one that maximise the $likelihood$ of training data to get the $posterior$ distribution of functions. The first approach has a problem that we have to decide the richness of the class of functions we are trying to learn for each specific task. But sometimes, the target function that we aim to learn ends up in a totally different class of functions from our estimation. For instance, we may instantiate a linear function estimator for a highly non-linear target. In this case, the result we get from our prediction when evaluate at new data will inevitably be subprime or sometimes, very poor. The second approach seems to be intractable in the sense that there are just too many functions that we can assign probability to. This is where Gaussian Process can be of great use. In this section, we first define Gaussian processes, then show how they can be used to tackle the regression problem. 
+	There are broadly two common approaches when it comes to supervised machine learning. One is to assume a specific class of functions that we want to learn, then train the model to learn the parameters that describe that specific function. The other approach is to assign a $prior$ probability to all the possible functions, then choose the one that maximise the $likelihood$ of training data to get the $posterior$ distribution of functions. The first approach has a problem that one has to decide the richness of the class of functions that the model is trying to learn for each specific task. But sometimes, the target function that one aims to learn ends up in a totally different class of functions from our estimation. For instance, the model may instantiate a linear function estimator for a highly non-linear target. In this case, the result one gets from the prediction when evaluate at new data will inevitably be subprime or sometimes, very poor. The second approach seems to be intractable in the sense that there are just too many functions that one can assign probability to. This is where Gaussian Process can be of great use. In this section, we first define Gaussian processes, then show how they can be used to tackle the regression problem. 
 	
 	\subsection{Introduction to Gaussian Process}
 	
-	We assume the readers are familiar with the definition and properties of multivariate Gaussian distributions and stochastic processes. We define a Gaussian process by the following definition.
+ Readers are assumed to be familiar with the definition and properties of multivariate Gaussian distributions and stochastic processes. One can define a Gaussian process by the following definition.
 	
 	\begin{definition}(Gaussian Process)\label{def:gp}
-		A $Gaussian$ process $\{X_i\}_{i\in \mathcal{I}}$ indexed by an index set $\mathcal{I}$ is a family of random variables $X_i$'s, all defined on the same probability space, such that any finite subset $\mathcal{F}\subset\mathcal{I}$, the random vector $X_{\mathcal{F}} := \{X_i\}_{i\in \mathcal{F}}$ has a multivariate Gaussian distribution.\cite[Lalley]{Lalley}
+		A $Gaussian$ process $\{X_i\}_{i\in \mathcal{I}}$ indexed by an index set $\mathcal{I}$ is a family of random variables $X_i$'s, all defined on the same probability space, such that any finite subset $\mathcal{F}\subset\mathcal{I}$, the random vector $X_{\mathcal{F}} := \{X_i\}_{i\in \mathcal{F}}$ has a multivariate Gaussian distribution.\cite{Lalley}
 	\end{definition}
 	
-	Because of their nice analytical tractability, it is convenient to model finite collection of real-valued functions using  multivariate Gaussian distribution. In practice, we can think of a Gaussian Process as a very long multivariate gaussian vector indexed by some index space (e.g. time, space, hyperspace \ldots). The data we use to train our model will be some dimensions of this vector that we have observed, and we want to make prediction of dimensions that we don't know. 
+	Because of their analytical tractability, it is convenient to model finite collection of real-valued functions using  multivariate Gaussian distributions. In practice, one can think of a Gaussian Process as a very long multivariate gaussian vector indexed by some index space (e.g. time, space, hyperspace \ldots). The training data will be some dimensions of this vector that one has already observed, and one wants to make prediction of dimensions that hasn't been observed.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.6\linewidth]{gp.png}
-		\caption{The upper panel is the $prior$ of a Gaussian Process with its parameters set at initial value. The bold black line is the mean, which in our example is constantly zero. The colored lines are sample functions drawn from this Gaussian Process. Grey area is one standard deviation away from the mean at each input point. The lower panel is the $posterior$. The dots on the black line are our observations. Colored lines are sample functions drawn from the $posterior$ distribution. Grey area is one standard deviation away from the mean. Notice that once we have our observation, we are more certain about the function value around obserced points. This is illustrated by the shrinking of the grey area in the lower panel.}
+		\caption{The upper panel is the $prior$ of a Gaussian Process with its parameters set at initial value. The bold black line is the mean, which in our example is constantly zero. The colored lines are sample functions drawn from this Gaussian Process. Grey area is one standard deviation away from the mean at each input point. The lower panel is the $posterior$. The dots on the black line are our observations. Colored lines are sample functions drawn from the $posterior$ distribution. Grey area is one standard deviation away from the mean. Notice that once we have our observation, we are more certain about the function value around observed points. This is illustrated by the shrinking of the grey area in the lower panel.}
 		\label{fig:gp}
 	\end{figure}
 	
-	Before we observe any values from a Gaussian Process, we only have a $prior$ distribution over functions specified by that Gaussian Process which may include all the continuous functions. Once we have observed some data points, the possible functions are now reduced to those that go through our observed points. Because of the multivariate gaussian distribution property of any finite subset of a Gaussian Process, we can compute the distribution of the points that we want to predict conditioning on our observed points. $Prior$ combined with observation gives us $posterior$ distribution over the function that we want to model.
+	Before one observes any values from a Gaussian Process, one only has a $prior$ distribution over functions specified by that Gaussian Process which may include all the continuous functions. Once some data points have been observed, the possible functions are now reduced to those that go through the observed points. Because of the multivariate gaussian distribution property of any finite subset of a Gaussian Process, one can compute the distribution of the points that one wants to predict conditioning on the observed points. $Prior$ combined with observation gives the $posterior$ distribution over the function that one wants to model.
 	
-	When we have more data points coming in, the uncertainty from the posterior distribution will be decreased. Hence, our prediction will become more and more confident when we have more and more data. For traditional parametric methods, the model will tend to overfit the training data when the size of training set grows. However, for Gaussian Processes, since we are not assuming any specific form of the predicted function, we do not have to worry about overfitting. There are still some flexibility left (specified by the variance of the posterior Gaussian distribution), even we have a lot of observation data points added to the  prior distribution. 
+	When there are more data points coming in, the uncertainty from the posterior distribution will be decreased. Hence, the prediction will become more and more confident when the model has observed more and more data. For traditional parametric methods, the model will tend to overfit the training data when the size of training set grows. However, for Gaussian Processes, since one are not assuming any specific form of the predicted function, one does not have to worry about overfitting of training data. There are still some flexibility left (specified by the variance of the posterior Gaussian distribution), even a lot of observation data points have been added to the prior distribution. 
 	
 	\subsection{Gaussian Process Regression}
-	So far, we have introduced Gaussian Processes. In order to solve the regression problem, we first define a $prior$ distribution of our target functions by a Gaussian process, then apply Bayesian inference to get the $posterior$ distribution of our predictions. The Gaussian Process Regression(GPR) can be interpreted in two ways: 1) Weight-space View and 2) Function-space View.
+	So far, we have introduced Gaussian Processes. In order to solve the regression problem, one needs to first define a $prior$ distribution of the target functions by a Gaussian process, then apply Bayesian inference to get the $posterior$ distribution of our predictions. The Gaussian Process Regression can be interpreted in two ways: 1) Weight-space View, and 2) Function-space View.
 	
 	\subsubsection{Weight-space View}
 	The weight-space view of Gaussian Process starts with the standard linear regression model but from a Bayesian perspective. Recall the Bayesian linear regression model of input $\vec x$ and targets $y$ is
@@ -207,7 +206,7 @@
 	\begin{equation}
 	p(\vec y|\vec X, \vec w) = \mathcal N(\vec X^T\vec w,\sigma^2_nI).
 	\end{equation}
-	In the Bayesian setting, we need to specify a $prior$ over the parameters $\vec w$ before we do any inference from the training data\cite[sec 2.1]{RandW}. We assume a zero mean Gaussian distribution for $\vec w$, $\vec w \sim \mathcal N(\vec 0, \Sigma)$. Then by Bayes' rule
+	In the Bayesian setting, one needs to specify a $prior$ over the parameters $\vec w$ before we do any inference from the training data\cite[sec 2.1]{RandW}. We assume a zero mean Gaussian distribution for $\vec w$, $\vec w \sim \mathcal N(\vec 0, \Sigma)$. Then by Bayes' rule
 	\begin{equation}
 	posterior = \frac{likelihood \times prior}{\textit{marginal likelihood}},
 	\end{equation}
@@ -254,8 +253,8 @@
 	\end{split}
 	\end{equation}
 	where $\phi^*=\phi(\vec x)^*$ and $K$ is defined as $\Phi^T\Sigma\Phi$.
-	Notice that in eq.\ref{weight_space_pred_2}, we can interpret $(\phi^*)^T\Sigma\Phi$, $(\phi^*)^T\Sigma\phi^*$ and $\Phi^T\Sigma \phi^*$ as inner products with respect to $\Sigma$. If we define $\psi(\vec x) = \Sigma^{1/2}\phi(\vec x)$ and $k(\vec x,\vec x')=\psi(\vec x) \cdot \psi(\vec x') $, then we have $(\phi^*)^T\Sigma\Phi = k(\vec x^*,\vec X)$, $(\phi^*)^T\Sigma\phi^* = k(\vec x^*,\vec x^*)$ and $\Phi^T\Sigma \phi^* = k(\vec X,\vec x^*)$. Then eq. \ref{weight_space_pred_2} becomes
-	\begin{equation}
+	Notice that in eq.\ref{weight_space_pred_2}, one can interpret $(\phi^*)^T\Sigma\Phi$, $(\phi^*)^T\Sigma\phi^*$ and $\Phi^T\Sigma \phi^*$ as inner products with respect to $\Sigma$. If we define $\psi(\vec x) = \Sigma^{1/2}\phi(\vec x)$ and $k(\vec x,\vec x')=\psi(\vec x) \cdot \psi(\vec x') $, then we have $(\phi^*)^T\Sigma\Phi = k(\vec x^*,\vec X)$, $(\phi^*)^T\Sigma\phi^* = k(\vec x^*,\vec x^*)$ and $\Phi^T\Sigma \phi^* = k(\vec X,\vec x^*)$. Then eq. \ref{weight_space_pred_2} becomes
+	\begin{equation}\label{weight_pred}
 	\begin{split}
 	p(y^*|\vec x^*,\vec X, \vec y) =\mathcal N(k&(\vec x^*,\vec X)(K+\sigma^2_nI)^{-1}\vec y,\\
 	&k(\vec x^*,\vec x^*)- k(\vec x^*,\vec X)(K+\sigma^2_nI)^{-1}k(\vec X,\vec x^*)),
@@ -264,7 +263,7 @@
 	which is the predictive distribution of $y^*$ in Gaussian Process. 
 	
 	\subsubsection{Function-space View}
-	Another interpretation of Gaussian Process Regression is through function-space view. If we consider a Gaussian Process as a continuous stochastic process, then it defines a probability distribution for functions \cite[Papoulis]{Papoulis}. Since a multivariate Gaussian distribution can be completely specified by its mean and covariance, by definition \ref{def:gp}, then a Gaussian Process can be fully specified by its mean function and covariance function \cite[Rasmussen and Williams]{RandW}. If we define the mean function as $m(\vec{x})$ and covariance function $k(\vec{x},\vec{x'})$ of a real-valued Gaussian Process $f(\vec x)$ as
+	Another interpretation of Gaussian Process Regression is through function-space view. If we consider a Gaussian Process as a continuous stochastic process, then it defines a probability distribution for functions \cite{Papoulis}. Since a multivariate Gaussian distribution can be completely specified by its mean and covariance, by definition \ref{def:gp}, then a Gaussian Process can be fully specified by its mean function and covariance function \cite{RandW}. If we define the mean function as $m(\vec{x})$ and covariance function $k(\vec{x},\vec{x'})$ of a real-valued Gaussian Process $f(\vec x)$ as
 	\begin{equation} \label{}
 	\begin{split}
 	m(\vec{x}) & = \EE \left[ f(\vec x)\right] \\
@@ -272,7 +271,7 @@
 	\end{split}
 	\end{equation}
 	
-	and then we can write the Gaussian Process $f(\vec x)$ as
+	and then one can write the Gaussian Process $f(\vec x)$ as
 	\begin{equation} \label{}
 	f(\vec x) \  \sim \ \GP\left(m(\vec{x}),k(\vec{x},\vec{x'})  \right).
 	\end{equation}
@@ -284,7 +283,7 @@
 	where $\mathcal N \left(\vec m , K \right)$ denotes a multivariate Gaussian distribution with mean $\vec m$ and covariance $K$. 
 	In our task, the index set $\mathcal X$ can be a subset of $\mathbb R ^d$, where $d$ is the dimension of our input space. Usually we take the mean function to be a constant function equals to zero for notational simplicity. In practice, one can subtract the mean to achieve this. 
 	
-	If we estimate our target function $f(\vec x)$ as a Gaussian process, then we need to check if the $consistency$ requirement of estimator is fulfilled. We can easily do this by the marginalization property of multivariate Gaussian distributions. The marginalization property tells us that if 
+	If the target function $f(\vec x)$ is estimated as a Gaussian process, then one needs to check if the $consistency$ requirement of estimator is fulfilled. One can easily do this by the marginalization property of multivariate Gaussian distributions. The marginalization property tells us that if 
 	\begin{equation*} \label{}
 	\left(\vec f_1, \vec f_2\right)\ \sim \ \mathcal N \left(\vec m , K \right),
 	\end{equation*}
@@ -296,7 +295,7 @@
 	\vec f_2\ & \sim \ \mathcal N \left(\vec m_2 , K_{22} \right).
 	\end{split}
 	\end{equation*}
-	where $K_{11}$ and  $K_{22}$ are sub-matrices of $K$. We prove this relationship in the following:
+	where $K_{11}$ and  $K_{22}$ are sub-matrices of $K$. The proof is in the following:
 	\begin{proof}
 		We prove the marginal density $p(\vec f_1)$ follows Gaussian distribution. First, by definition of marginalization, we have
 		\begin{equation*} \label{}
@@ -328,7 +327,7 @@
 		\begin{equation*} \label{}
 		K_{11}^{-1} = \vec\Lambda_{11}-\vec\Lambda_{12}\vec\Lambda_{22}^{-1}\vec\Lambda_{21},
 		\end{equation*}
-		combined with the line above, we get
+		combined with the line above to get
 		\begin{equation*} \label{}
 		p(\vec f_1,\vec f_2) = \frac{1}{(2\pi)^{n/2}\sqrt{\det K}}\exp{(E_1)}\exp{(E_2)},
 		\end{equation*}
@@ -347,7 +346,7 @@
 		\begin{equation*} \label{}
 		\int \exp{(E_1)}d\vec f_2 = (2\pi)^{n_2/2}\sqrt{\det \vec \Lambda_{22}^{-1}}
 		\end{equation*}
-		plug this into the line above, we get
+		plug this into the line above to get
 		\begin{equation*} \label{}
 		p(\vec f_1) = \frac{\sqrt{\det \vec \Lambda_{22}^{-1}}}{(2\pi)^{n_1/2}\sqrt{\det K}} \exp{\left(-\frac{1}{2}\left(\vec f_1 - \vec m_1\right)^TK_{11}^{-1}\left(\vec f_1 - \vec m _1 \right)\right)}.
 		\end{equation*}
@@ -365,15 +364,15 @@
 		which proves that $\vec f_1\sim\mathcal{N}(\vec m_1,K_{11})$.
 	\end{proof}
 	
-	Through $consistency$ of Gaussian process, we know if $\left(\vec f_1, \vec f_2\right)\sim \mathcal N \left(\vec m , K \right)$, then $\vec f_1 \sim   \mathcal N \left(\vec m_1 , K_{11} \right)$ and $ \vec f_2 \sim  \mathcal N \left(\vec m_2 , K_{22} \right)$. Now we can use Gaussian process to model target function that we want to estimate.
+	Through $consistency$ of Gaussian process, one knows if $\left(\vec f_1, \vec f_2\right)\sim \mathcal N \left(\vec m , K \right)$, then $\vec f_1 \sim   \mathcal N \left(\vec m_1 , K_{11} \right)$ and $ \vec f_2 \sim  \mathcal N \left(\vec m_2 , K_{22} \right)$. Now one can use Gaussian process to model target function that one wants to estimate.
 	
-	We start with modelling our target latent function $\vec f$ by a zero mean Gaussian Process, then $\vec f$ has prior distribution:
+	Firstly, model the target latent function $\vec f$ by a zero mean Gaussian Process, then $\vec f$ has prior distribution:
 	\begin{equation} \label{noise-free}
 	\vec f \sim \mathcal{N}(\vec 0, K),
 	\end{equation}
 	where $K$ is the covariance matrix.
 	
-	First, we assume the special case where our target functions are noise-free. Suppose we have observed data $\{(\vec x_i,f_i)|i=1,...,n\}$, we want to infer the value of our target function at input points $\{\vec x_j | j = 1,...,n_*\}$. We call $\vec f$ as training outputs and $\vec f_*$ as test outputs. From the prior distribution, we know 
+Assume the special case where the target functions are noise-free. Suppose we have observed data $\{(\vec x_i,f_i)|i=1,...,n\}$, we want to infer the value of our target function at input points $\{\vec x_j | j = 1,...,n_*\}$. We call $\vec f$ as training outputs and $\vec f_*$ as test outputs. From the prior distribution, we know 
 	$\vec f$ and $\vec f_*$ have joint distribution
 	\begin{equation} \label{}
 	\begin{bmatrix}
@@ -467,14 +466,14 @@
 		\begin{equation}
 		p(\vec f_*|\vec f) = \frac{1}{E'}\exp\left(-\frac{1}{2}(\vec f_* +V^{-1}_{**}V_*\vec f)^TV_{**}(\vec f_* ++V^{-1}_{**}V_*\vec f)\right).
 		\end{equation}
-		Recognise this is in the form of Gaussian pdf with 
+		Recognise this is in the form of Gaussian probability density function with 
 		\begin{equation}
 		\begin{split}
 		\vec \mu &= -V^{-1}_{**}V_*\vec f,\\
 		\sigma^2 &= V_{**}^{-1}.
 		\end{split}
 		\end{equation}
-		By \textit{matrix inverse lemma}, we have
+		By \textit{matrix inverse lemma}(see Appendix), we have
 		\begin{equation}
 		\begin{bmatrix}
 		K & K_*\\
@@ -531,11 +530,12 @@
 	\widehat{\vec V_*} &= K(X_*,X_*) - K(X_*,X)[K(X,X)+ \sigma^2_n \vec I]^{-1}K(X,X_*).
 	\end{split}
 	\end{equation}
+This is equivalent to the predictive distribution from weight-space view in eq.\ref{weight_pred}.
 	
-	Notice that though we assume the mean function as constantly zero in the prior distribution, we get non-zero mean function in the posterior distribution for the test data set. This can be interpreted as after observing the training set, we have more information about the distribution of the test set. Also, different from a parametric model, when trained, the model can basically throw away all the training data, the Gaussian Process Regression model needs to store all the training data for prediction. For a parametric model, the goal is to find the predefined parametric relationship between features and targets, once done that, we don't need the training data for prediction. The features, ${\vec x^*_i | i=1,...,n^*}$, will give all the information we need for prediction $\vec y^*_i$'s. However, in Gaussian Process Regression model, the prediction eq. \ref{eq:pred3} and eq. \ref{eq:pred4} need the information from training set to get the posterior distribution of the test set.
+	Notice that though we assume the mean function as constantly zero in the prior distribution, we get non-zero mean function in the posterior distribution for the test data set. This can be interpreted as after observing the training set, the model has more information about the distribution of the test set. Also, different from a parametric model, the Gaussian Process Regression model needs to store all the training data for prediction. For a parametric model, the goal is to find the predefined parametric relationship between features and targets, once done that, the model doesn't need the training data for prediction. The features, ${\vec x^*_i | i=1,...,n^*}$, will give all the information we need for prediction $\vec y^*_i$'s. However, in Gaussian Process Regression model, the prediction eq. \ref{eq:pred3} and eq. \ref{eq:pred4} need the information from training set to get the posterior distribution of the test set.
 	
 	\subsection{Predicition from Gaussian Process Regression}\label{sec:decision_theory}
-	Form eq. \ref{eq:pred3}, we know that the posterior distribution of test data is Gaussian with mean and variance given in eq.\ref{eq:pred4}. But if we want an explicit prediction for our target function rather than a distribution, what is the value then? One intuitive answer would be the mean of posterior distribution. In practice, this prediction is appropriate in most real-life tasks. There are in-depth explanation in \cite[Rasmussen and Williams, sec 2.4]{RandW}, we give a summary of the rationale in the following.
+	Form eq. \ref{eq:pred3}, we know that the posterior distribution of test data is Gaussian with mean and variance given in eq.\ref{eq:pred4}. But if one wants an explicit prediction for the target function rather than a distribution, what is the value then? One intuitive answer would be the mean of posterior distribution. In practice, this prediction is appropriate in most real-life tasks. Rasmussen and Williams provides in-depth explanation in \cite[sec 2.4]{RandW}, we present a summary of the rationale in the following.
 	
 	To find a optimal prediction value, we need a way to measure our performance. Let's define a \textit{loss function}, $\mathcal{L}(\hat y,y)$, which specifies the loss between the prediction, $\hat y$ and the true value, $y$. The loss function can be \textit{mean squared error} or \textit{mean absolute error} which are both symmetric loss functions.
 	
@@ -547,35 +547,35 @@
 	\begin{equation}
 	y_{optimal}|\vec x_*\ = \ \underset{\hat y}{\mathrm{argmin}}\tilde{R}_{\mathcal{L}}(\hat y|\vec x_*).
 	\end{equation}
-	For \textit{mean squared error} loss function, the minimum occurs at the mean of $y_*$. For \textit{mean absolute error} loss function, the minimum occurs at the median of $y_*$. In our case, the distribution of $y_*$ is Gaussian, so the mean and median coincide. Furthermore, for other symmetric loss function and symmetric posterior distribution, the optimal prediction occurs at the mean of the distribution. For asymmetric loss functions, the optimal prediction can be computed from eq. \ref{loss1} and eq. \ref{loss2}. For more detail, see \cite[Berger]{Berger}.
+	For \textit{mean squared error} loss function, the minimum occurs at the mean of $y_*$. For \textit{mean absolute error} loss function, the minimum occurs at the median of $y_*$. In our case, the distribution of $y_*$ is Gaussian, so the mean and median coincide. Furthermore, for other symmetric loss function and symmetric posterior distribution, the optimal prediction occurs at the mean of the distribution. For asymmetric loss functions, the optimal prediction can be computed from eq. \ref{loss1} and eq. \ref{loss2}. For more detail, see \cite{Berger}.
 	
 	\newpage
 	\section{Model Selection}\label{sec:model_selection}
-	When modelling our target function as a zero mean Gaussian process, i.e.
+	When modelling the target function as a zero mean Gaussian process, i.e.
 	\begin{equation*} \label{}
 	f(\vec x) \  \sim \ \GP\left(\vec 0,k(\vec{x},\vec{x'})  \right).
 	\end{equation*}
-	the main task will be to find a good configuration of covariance matrix, generated by kernel function $k$ and a set of $hyperparameters$ that gives the best performance. The model selection is a combination of choosing a good kernel function and optimizing $hyperparameters$ of the kernel function. In this section, we will discuss several aspects of model selection, namely covariance matrix, kernel functions, $hyperparameters$ optimization.
+	the main task will be to find a good configuration of covariance matrix, generated by kernel function $k$ and a set of $hyperparameters$ that gives the best performance. The model selection is a combination of choosing a good kernel function and optimizing $hyperparameters$ of the kernel function. In this section, we will discuss several aspects of model selection, namely marginal likelihood, covariance matrix, kernel functions, $hyperparameters$ optimization.
 	
 	\subsection{Marginal Likelihood of the training data}\label{lik}
-	From eq. \ref{noise-free}, we know that the noise-free prior follow multivariate Gaussian distribution with mean $\vec 0$ and covariance $K(X,X)$. By Bayes' theorrm, the marginal likelihood of our noisy training data is the intergral of the likelihood times prior, whcih is 
+	From eq. \ref{noise-free}, the noise-free $prior$ follows multivariate Gaussian distribution with mean $\vec 0$ and covariance matrix $K(X,X)$. By Bayes' theorrm, the marginal likelihood of the noisy training data is the integral of the likelihood times prior, which is 
 	
 	\begin{equation}
 	p(\vec y|X)\, = \, \int p(\vec y|\vec f, X)p(\vec f|X)d\vec f.
 	\end{equation}
 	
-	The term \textit{marginal} likelihood means the marginalization over the function values $\vec f$. If we assume i.i.d. Gaussian noise, then we have $\vec y = f(\vec x) + \vec\epsilon$, where $\vec\epsilon \sim \mathcal{N}(\vec 0, \sigma^2_n)$. Let $K_y = K + \sigma^2_nI$, then by eq. \ref{cov_y}. we have
+	The term \textit{marginal} likelihood means the marginalization over the function values $\vec f$. Assume identical, independent Gaussian noise, then we have $\vec y = f(\vec x) + \vec\epsilon$, where $\vec\epsilon \sim \mathcal{N}(\vec 0, \sigma^2_n)$. Let $K_y = K + \sigma^2_nI$, then by eq. \ref{cov_y}. one gets
 	\begin{equation}
 	\vec y \  \sim \ \mathcal N \left(\vec 0,K_y  \right).
 	\end{equation}
-	Since the likelihood of a Gaussian distribution involves exponential term, we take the logarithm of it. So the log likelihood of $\vec y$ given $\vec X$ and $\vec \theta$ is
+	Since the likelihood of a Gaussian distribution involves exponential term, one can take the logarithm of it. The log likelihood of $\vec y$ given $\vec X$ and $\vec \theta$ is 
 	\begin{equation}\label{log-likelihood}
 	\log p(\vec y|\vec X, \vec \theta)=-\frac{1}{2}\vec y^T K_y^{-1}\vec y-\frac{1}{2}\log|K_y| - \frac{n}{2}\log 2\pi,
 	\end{equation}
 	where $\vec \theta$ is parameters in kernel function $k$.
 	
 	\subsection{Covariance Matrix and Kernel functions}\label{subsec:kernel_func}
-	A kernel function (also called a covariance function), $k$ governs the behaviour and property of a zero-mean Gaussian process. Since for any element $K_{ij}$ in the covariance matrix $K$, we know $K_{ij} = k(\vec x_i,\vec x_j)$, the relationship of covariance matrix $K$ and kernel function $k$ is
+	A kernel function $k$ (also called a covariance function) governs the behaviour and property of a zero-mean Gaussian process. Since for any element $K_{ij}$ in the covariance matrix $K$, we know $K_{ij} = k(\vec x_i,\vec x_j)$, the relationship of covariance matrix $K$ and kernel function $k$ is
 	\begin{equation}\label{cov_mat}
 	K = 
 	\begin{bmatrix}
@@ -593,12 +593,12 @@
 		\includegraphics[width=0.49\textwidth]{cov1.png}
 		\hspace{0.15em}
 		\includegraphics[width=0.49\textwidth]{cov2.png}
-		\caption{Covariance matrix, the left panel is the covarianve matrix $K$ of the training data $\vec X$. The diagonal component $K_{ii}$ is the variance of $\vec X_i$, the off-diagonal component $K_{ij}$ is the covariance between $\vec X_i$ and $\vec X_j$. The right panel is the cross-covariance $K^*$ of $\vec X$ and testing data $\vec X^*$. $K^*_{ij}$ is the covariance between $\vec X_i$ and $\vec X^*_j$.}
+		\caption{Heat-map of Covariance matrices. The left panel is the covarianve matrix $K$ of the training data $\vec X$. The diagonal component $K_{ii}$ is the variance of $\vec X_i$, the off-diagonal component $K_{ij}$ is the covariance between $\vec X_i$ and $\vec X_j$. The right panel is the cross-covariance $K^*$ of $\vec X$ and testing data $\vec X^*$. $K^*_{ij}$ is the covariance between $\vec X_i$ and $\vec X^*_j$.}
 	\end{figure}
 	
 	A kernel function in some sense measures the similarity between two data points in the input space. The basic assumption in GPR is that two points that are close in the input space should be more likely to have similar target values. 
 	
-	Since a covariance matrix is always positive-semidefinite\footnotemark[1] and symmetric, for a function to be qualified as a kernel function, it must be positive-semidefinite\footnotemark[2] and symmetric in the sense that $k(\vec x_i,\vec x_j) = k(\vec x_j,\vec x_i)$\cite[Rasmussen and Williams, sec 4.1]{RandW}.
+	Since a covariance matrix is always positive-semidefinite\footnotemark[1] and symmetric, for a function to be qualified as a kernel function, it must be positive-semidefinite\footnotemark[2] and symmetric in the sense that $k(\vec x_i,\vec x_j) = k(\vec x_j,\vec x_i)$\cite[sec 4.1]{RandW}.
 	
 	\footnotetext[1]{
 		A symmetric $n\times n$ real matrix $\vec M$ is said to be positive-semidefinite(PSD) if $\vec v^T\vec M\vec v$ is non-negative for all $\vec v$ in $\RR^n$.
@@ -612,32 +612,32 @@
 	}
 	
 	\subsubsection{Several Common Kernel functions}
-	To understand what kind of function structure that Gaussian process can express, we have to first understand properties of embedded kernel function of the GP.
-	Kernel function map $\vec x,\vec x' \in \mathcal X$ into $\RR$. We measure the similarity of $\vec x,\vec x'$ in $\mathcal X$ by the result from the kernel function.
+	To understand what kind of function structure that Gaussian process can express, one has to first understand properties of embedded kernel function of the GP.
+	Kernel function map $\vec x,\vec x' \in \mathcal X$ into $\RR$. The similarity of $\vec x,\vec x'$ in $\mathcal X$ is measured by the result from the kernel function.
 	
-	A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. We write $k$ to take only single argument $\vec r = \vec x - \vec x'$. 
+	A stationary kernel function is a function whose value only depends on the difference between $\vec x$ and $\vec x'$. One can write $k$ to take only single argument $\vec r = \vec x - \vec x'$. 
 	\subsubsection*{Radial Basis Function Kernel}
 	The mostly commonly used stationary kernel function is the \textit{Radial Basis Function}(RBF) kernel, which has the form
 	\begin{equation}\label{RBF}
 	k_{RBF}\, = \, \sigma^2\exp\left(-\frac{\vec r^2}{2l^2}\right),
 	\end{equation}
-	where the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ controls the magnitude of function value. The RBF kernel function is also known as the \textit{quared exponential}(SE) function. This kernel function has derivatives at all orders, which means Gaussian process with this kernel will be very smooth. For detailed explanation, please see \cite[Rasmussen and Williams, sec 4.2]{RandW}. Sometimes, it is not very ideal to assume such strong smoothness for functions in real applications, so we introduce another family of stationary kernel functions, namely the \textit{Mat\'ern class}\cite[Stein]{Stein}.
+	where the parameter $l$ is the \textit{characteristic length-scale} and $\sigma$ controls the magnitude of function value. The RBF kernel function is also known as the \textit{quared exponential}(SE) function. This kernel function has derivatives at all orders, which means Gaussian process with this kernel will be very smooth. For detailed explanation, please see \cite[sec 4.2]{RandW}. Sometimes, target functions in real wrold application do not have this smoothness, so another family of stationary kernel functions, namely the \textit{Mat\'ern class} kernel functions are introduced by Stein in \cite{Stein}.
 	
 	\subsubsection*{Mat\'ern Class of Kernel Functions}
 	This class of kernel functions was named after the work of Mat\'ern. The general form of \textit{Matern class} kernel functions is given by
 	\begin{equation}
 	k_{Matern}(\vec r) = \frac{2^{1-\nu}}{\Gamma{(\nu)}}\left(\frac{\sqrt{2\nu}\vec r}{l}\right)^\nu K_\nu \left(\frac{\sqrt{2\nu}\vec r}{l}\right),
 	\end{equation}
-	where $\nu$ and $l$ are positive parameters and $K_\nu$ is a second kind modified Bessel function\cite[Abramowitz and Stegun]{Ab_St}. When $\nu \rightarrow \infty$, we obtain the SE kernel function. For smaller $\nu$, the resulting Gaussian process has a rougher path than those from a SE kernel. The most commonly exploited cases in machine learning is when $\nu = 3/2$ and $ 5/2$\cite[Rasmussen and Williams, sec 4.2]{RandW}. These two kernel functions are of the forms
+	where $\nu$ and $l$ are positive parameters and $K_\nu$ is a second kind modified Bessel function\cite[sec 9.6]{Ab_St}. When $\nu \rightarrow \infty$, we obtain the SE kernel function. For smaller $\nu$, the resulting Gaussian process has a rougher path than those from a SE kernel. The most commonly exploited cases in machine learning is when $\nu = 3/2$ and $ 5/2$ \cite[sec 4.2]{RandW}. These two kernel functions are of the forms
 	\begin{equation}
 	\begin{split}
-	k_{\nu = 3/2}(\vec r) &=\left(1+\frac{\sqrt{3}\vec r}{l}\right)\exp\left(-\frac{\sqrt{3}\vec r}{l}\right),\\
-	k_{\nu = 5/2}(\vec r) &=\left(1+\frac{\sqrt{5}\vec r}{l}+\frac{5\vec r^2}{3l^2}\right)\exp\left(-\frac{\sqrt{5}\vec r}{l}\right).
+	k_{Matern32}(\vec r) &=\left(1+\frac{\sqrt{3}\vec r}{l}\right)\exp\left(-\frac{\sqrt{3}\vec r}{l}\right),\\
+	k_{Matern52}(\vec r) &=\left(1+\frac{\sqrt{5}\vec r}{l}+\frac{5\vec r^2}{3l^2}\right)\exp\left(-\frac{\sqrt{5}\vec r}{l}\right).
 	\end{split}
 	\end{equation}
-	For $\nu\geq 7/2$, the resulting Gaussian process will become very smooth\cite[Rasmussen and Williams, sec 4.2]{RandW}.
+	For $\nu\geq 7/2$, Rasmussen and Williams have proved the resulting Gaussian process is very smooth in \cite[sec 4.2]{RandW}.
 	
-	Stationary kernels will give the same value as long as the difference between $\vec x$ and $\vec x'$ is the same. Hence, stationary kernels are translation invariant. When we want to incorporate effects of translation in feature space, we need to introduce non-stationary kernel functions.
+	Stationary kernels will give the same value as long as the difference between $\vec x$ and $\vec x'$ is the same. Hence, stationary kernels are translation invariant. When one wants to incorporate effects of translation in feature space, non-stationary kernel functions should be introduced.
 	
 	\begin{figure}[t!]
 		\centering
@@ -651,7 +651,7 @@
 	\begin{equation}
 	k_{Linear} = \frac{\vec x \cdot \vec x'}{l},
 	\end{equation}
-	where $l$ is the \textit{characteristic length-scale}. Gaussian process governed by a Linear kernel will estimate a linear function. The expressive ability of Linear kernel alone is not very interesting, but combined with other non=linear kernel. the resulting GP can capture global trend as well as local variation of the target function. 
+	where $l$ is the \textit{characteristic length-scale}. Gaussian process governed by a Linear kernel will estimate a linear function, see figure \ref{fig:gp_diff_kernels}. The expressive ability of Linear kernel alone is not very interesting, but combined with other non-linear kernel. the resulting GP can capture global trend as well as local variation of the target function. 
 	
 	GP $priors$ and $posteriors$ with different kernel functions are shown in Figure \ref{fig:gp_diff_kernels} and \ref{fig:gp_diff_kernels_2}.
 	
@@ -663,7 +663,7 @@
 	\end{figure}
 	
 	\subsubsection*{Combining Kernel Functions}
-	For most real-life tasks e.g. estimating the price of derivatives, using vanilla kernel functions described above may not generate ideal result. We can construct new kernel functions from these vanilla kernel functions by addition, multiplication, convolution and other methods. Adding two kernel functions is equivalently modelling the resulting Gaussian process by the sum of two independent Gaussian processes\cite[Rasmussen and Williams, sec 4.2]{RandW}.
+	For most real-life tasks e.g. estimating the price of derivatives, using vanilla kernel functions described above may not generate ideal result. We can construct new kernel functions from these vanilla kernel functions by addition, multiplication, convolution and other methods. Adding two kernel functions is equivalently modelling the resulting Gaussian process by the sum of two independent Gaussian processes\cite[sec 4.2]{RandW}.
 	
 	\begin{figure}[h!]
 		\centering
@@ -935,30 +935,29 @@
 	\section{Data Analysis}\label{sec:data_analysis}
 	
 	\subsection{Data Description}
-	The data used during implementation is propriety data from Citigroup. The feature space contains $1290$ dimensions of numeric values and the target value is price of synthetic CDO. Since all feature dimensions are numeric, we will not discuss handling with missing features and converting non-numeric features to numeric features in this paper. After removing feature dimensions with variance less than $0.01$\footnotemark[3], we still have $1118$ dimensions left. Within some of these dimensions, there are large differences between the minimum and maximum values. So before doing any specific data processing, we will first rescale all feature dimensions into the interval of $[0,1]$ for better computational performance. By rescaling all dimensions into uniform interval, we can effectively avoid model misspecification because of large difference in numeric ranges of feature values\cite{Kotsiantis}. Another benefit of rescaling all feature values into uniform interval lies in the more reasonable initialization of parameters. We can conveniently initialize the \textit{characteristic length-scale} in kernel functions to be $0.5$ or $1.0$ for all dimensions, then perform optimization. After doing this pre-processing, we will focus on dimension reduction in the following content.
-	
+	The data used during implementation is propriety data from Citigroup. The feature space contains $1290$ dimensions of numeric values and the target value is the price of synthetic CDO. Since all feature dimensions are numeric, this paper will not discuss handling with missing features and converting non-numerical features to numeric features. After removing feature dimensions with variance less than $0.01$\footnotemark[3], there are still $1118$ dimensions left. Within some of these dimensions, there are large differences between the minimum and maximum values. So before doing any specific data processing, one should first rescale all feature dimensions into the interval of $[0,1]$ for better computational performance. By rescaling all dimensions into uniform interval, it can effectively avoid model misspecification because of large difference in numeric ranges of feature values\cite{Kotsiantis}. Another benefit of rescaling all feature values into uniform interval lies in the more reasonable initialization of parameters.  The \textit{characteristic length-scale} in kernel functions can be conveniently initialized to be $0.5$ or $1.0$ for all dimensions, then perform optimization. After doing this pre-processing, the remaining section will be focused on dimension reduction techniques.	
 	\footnotetext[3]{
 		The variance of a random variable measures how far a set of observations are spread out from the mean. A constant random variable has zero variance. By removing dimensions with near zero variance, we discard those dimensions that are almost constant in all data points. 
 	}
 	
 	\subsection{Dimension Reduction}
-	Due to the computational expense of calculating the inverse of covariance matrix, which is of order $\mathcal O(n^3)$ for a $n$-dimensional positive semi-definite matrix, it is hard to work with large data set in practice. However, for high dimensional input, we have to train our model with a reasonably large amount of data so that on average each dimension is adequately represented. Also, as mentioned above, we have to optimize more parameters for high dimension data if using ARD kernels. This also requires training the model with a large amount of data for parameters to converge. But we are restricted by $\mathcal O(n)$ computational complexity. To tackle this dilemma, we need to reduce the dimension of feature space while retaining the information from the original data. In this subsection, we will present two dimension reduction techniques, namely Principal Component Analysis(PCA) and Autoencoder(AE). 
+	Due to the computational expense of calculating the inverse of covariance matrix, which is of order $\mathcal O(n^3)$ for a $n$-dimensional positive semi-definite matrix, it is hard to work with large data set in practice. However, for high dimensional input, one must train the model with a reasonably large amount of data so that on average each dimension is adequately represented. Also, as mentioned above, one has to optimize more parameters for high dimension data if using ARD kernels. This also requires training the model with a large amount of data for parameters to converge. But it is restricted by $\mathcal O(n)$ computational complexity of covariance matrix inversion. To tackle this dilemma, one needs to reduce the dimension of feature space while retaining the information from the original data. In this subsection, two dimension reduction techniques will be presented, namely Principal Component Analysis(PCA) and Autoencoder(AE). 
 	
 	\subsubsection{Principal Component Analysis}
-	Principal Component Analysis(PCA) is used extensively in statistics for data representation and dimension reduction. The main purpose of PCA is to find a new coordinate system in which we can express the original data with less dimensions without significant loss of information. We will briefly explanain how PCA works in the following paragraph. For a detailed discuss about PCA, please see \cite[Jolliffe]{Jolliffe}.
+	Principal Component Analysis(PCA) is used extensively in statistics for data representation and dimension reduction. The main purpose of PCA is to find a new coordinate system in which we can express the original data with less dimensions without significant loss of information. The following paragraph will briefly explain how PCA works. For a detailed discuss about PCA, please see \cite[Jolliffe]{Jolliffe}.
 	
-	To perform PCA, we first need to standardize the data by subtracting mean and dividing standard deviation. Then calculate the sample covariance matrix of the input data $\vec Q = \frac{1}{n-1}\vec X\vec X^T$, where each column of $\vec X$ is one data point in original input space, $\mathbb R^d$. Then find the eigenvalues $\lambda_1, \cdots,\lambda_d$ of $\vec Q$ and corresponding orthogonal eigenvectors $\vec u_1,\cdots,\vec u_d$. Once we have all the eigenvalues, we need to sort the eigenvalues in descending order and corresponding eigenvectors. The eigenvector corresponding to the largest eigenvalue is called first \textit{principal component} and so on. To reduce dimensions, we discard those eigenvectors corresponding to eigenvalues that are smaller than a predefined threshold(small eigenvalues correspond to eigenvectors containing less information about the original data). We can also precede by choosing the first $d$ eigenvalues until
+	To perform PCA, one will first need to standardize the data by subtracting mean and dividing standard deviation. Then calculate the sample covariance matrix of the input data $\vec Q = \frac{1}{n-1}\vec X\vec X^T$, where each column of $\vec X$ is one data point in original input space, $\mathbb R^d$. Then find the eigenvalues $\lambda_1, \cdots,\lambda_d$ of $\vec Q$ and corresponding orthogonal eigenvectors $\vec u_1,\cdots,\vec u_d$. Once all the eigenvalues have been calculated, one needs to sort the eigenvalues in descending order and corresponding eigenvectors. The eigenvector corresponding to the largest eigenvalue is called first \textit{principal component} and so on. To reduce dimensions, one discards those eigenvectors corresponding to eigenvalues that are smaller than a predefined threshold(small eigenvalues correspond to eigenvectors containing less information about the original data). One can also precede by choosing the first $d$ eigenvalues until
 	\begin{equation}
 	\frac{\sum_{i=1}^{k}\lambda_i}{\sum_{j=1}^{d}\lambda_j}\geq \epsilon, 
 	\end{equation} 
-	where $\epsilon$ is the percentage of variance we want to keep from the original data. Now we have chosen $k$($<d$) eigenvectors to form our feature matrix $\vec U$ which is of shape $k\times d$. The dimension reduction is done by multiplying $\vec X$ by $\vec U$ from left,
+	where $\epsilon$ is the percentage of variance one wants to keep from the original data. Now there are $k$($<d$) eigenvectors to form the feature matrix $\vec U$ which is of shape $k\times d$. The dimension reduction is done by multiplying $\vec X$ by $\vec U$ from left,
 	\begin{equation}
 	\vec X' = \vec U \cdot \vec X
 	\end{equation}
 	where $\vec X'$ is a $k\times n$ matrix with each column a transformed data point in reduced input space $\mathbb R^k$.
 	
 	\subsubsection{Autoencoder}
-	An autoencoder is a type of feed forward neural network that is mainly used for efficient data encoding\cite[chapter 14]{Deep_Learning}. The most simple case of autoencoder contains three layers -- namely, input layer, hidden layer and output layer. This type of autoencoder can be divided into two parts: an encoder function and a decoder function. An encoder function takes the original data as input and transform it to a transformed space. Denote the encoder as $\vec h = f(\vec x)$, where $\vec x\in \mathbb R^d, \vec h\in \mathbb R^m$. A decoder function takes $\vec h$ as input and outputs a reconstruction of the original data $\vec x' = g(\vec h)$, where $\vec x'\in \mathbb R^d$. We train the model by minimize the reconstruction error between $\vec x$ and $\vec x'$. Commonly used reconstruction error measure is the Mean Squared Error loss function 
+	An autoencoder is a type of feed forward neural network that is mainly used for efficient data encoding\cite[chapter 14]{Deep_Learning}. The most simple case of autoencoder contains three layers -- namely, input layer, hidden layer and output layer. This type of autoencoder can be divided into two parts: an encoder function and a decoder function. An encoder function takes the original data as input and transform it to a transformed space. Denote the encoder as $\vec h = f(\vec x)$, where $\vec x\in \mathbb R^d, \vec h\in \mathbb R^m$. A decoder function takes $\vec h$ as input and outputs a reconstruction of the original data $\vec x' = g(\vec h)$, where $\vec x'\in \mathbb R^d$. One can train the model by minimize the reconstruction error between $\vec x$ and $\vec x'$. Commonly used reconstruction error measure is the Mean Squared Error loss function 
 	\begin{equation}
 	L(\vec x,\vec x') = \frac{1}{n}\sum_{i=1}^{n}(\vec x_i-\vec x'_i)^2. 
 	\end{equation}
@@ -969,7 +968,7 @@
 	\end{figure}
 
 	
-	When $m<d$, it means the encoder function transforms the original data into a lower dimensional space and the decoder function can recover the original data from the transformed space within a tolerable error range. This type of autoencoders is called \textit{undercomplete autoencoders}(hidden layer dimension fewer than input dimension) and is widely used as a dimension reduction tool. By setting the hidden layer size smaller than the input dimension and minimizing the reconstruction error, we force the autoencoder to learn meaningful transformation of original features.
+	When $m<d$, it means the encoder function transforms the original data into a lower dimensional space and the decoder function can recover the original data from the transformed space within a tolerable error range. This type of autoencoders is called \textit{undercomplete autoencoders}(hidden layer dimension fewer than input dimension) and is widely used as a dimension reduction tool. By setting the hidden layer size smaller than the input dimension and minimizing the reconstruction error, it forces the autoencoder to learn meaningful transformation of original features.
 	When the activation function used in the encoder part is linear, i.e. $f(\vec x) = \vec w\cdot\vec x + b$, and the hidden layer is fully connected, the subspace spanned by the autoencoder by the encoder function is the same as the one spanned by principal components from PCA. Detailed discussion and proof are provided by Plaut in \cite{Plaut}.
 	
 
@@ -982,11 +981,11 @@
 	\end{split}
 	\end{equation}
 	where $\vec w, b$ and $\vec w', b'$ are weights and bias of the encoder and decoder function, the autoencoder can learn a more useful non-linear generalization of the one generated by PCA. 
-	After the training process, we can discard the decoder part and only apply the encoder function to the whole data set for dimension reduction purpose.
+	After the training process, one can discard the decoder part and only apply the encoder function to the whole data set for dimension reduction purpose.
 	
 	
 	
-	Apart from dimension reduction, we can also add denoising feature to the autoencoder by feed the model with \textit{noisy} data, then try to reconstruct the \textit{clean} data. This type of autoencoders are called \textit{denoising autoencoders}. 
+	Apart from dimension reduction, one can also add denoising feature to the autoencoder by feed the model with \textit{noisy} data, then try to reconstruct the \textit{clean} data. This type of autoencoders are called \textit{denoising autoencoders}. 
 	
 	In a denoising autoencoder, a random noise, usually Gaussian noise, is added to the original data $\vec y$ to get noisy data $\hat{\vec y}$. Then apply the encoder function and decode function to get $\hat{\vec h} = f(\vec y)$  and $\vec{\hat y'} = g(\hat{\vec h})$. The loss function is defined as Mean Squared Error between the reconstructed $\vec{\hat y'}$ and the original data $\vec y$. The training process it to minimize $L(\vec y,\vec{\hat y'})$. 
 	
@@ -997,7 +996,7 @@
 	\end{figure}
 	
 	\subsection{Numerical Results}\label{sec:data_ana_res}
-	While traditional dimension reduction techniques like PCA are methods, undercomplete autoencoder is a family of methods. We can configure different autoencoders by number of nodes in the hidden layer or number of hidden layers. One can immediate see this can go on forever. Like the configuration of a normal Neural Network, the configuration of an undercomplete autoencoder for a specific dataset is often based on experience and experiments. For computational tractability, we will use only one hidden layer in this paper. We set the hidden layer as a dense layer which means every nodes in a layer is fully connected to every nodes from the previous layer. The empirically-derived rule-of-thumb for sizes of hidden layers is $2^n$. In our implementation, we will start at 256, approximately one-fourth of the original dimension and gradually decrease to 16. Training results for autoencoders with different sizes are shown in the following figures.
+	While traditional dimension reduction techniques like PCA are methods, undercomplete autoencoder is a family of methods. One can configure different autoencoders by number of nodes in the hidden layer or number of hidden layers. One can immediate see this can go on forever. Like the configuration of a normal Neural Network, the configuration of an undercomplete autoencoder for a specific dataset is often based on experience and experiments. For computational tractability, the implementaion will use only one hidden layer in this paper. The hidden layer is set to be a dense layer, which means every nodes in a layer is fully connected to every nodes from the previous layer. The empirically-derived rule-of-thumb for sizes of hidden layers is $2^n$. In this implementation, it starts with 256 nodes, approximately one-fourth of the original dimension and gradually decrease to 16. Training results for autoencoders with different sizes are shown in the following figures.
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=.8\textwidth]{ae_mse.png}
@@ -1014,7 +1013,7 @@
 	
 	From figure \ref{ae_res} and \ref{ae_res_1}, when further compressing the data to lower dimension, the AE is actually able to reconstruct the original data within smaller error range. This means the AE with non-linear activation function can effectively learn meaningful features in a much lower dimensional space that can recover the original information within little error. 
 	
-	Feed the reduced data into our GPR model with RBF kernel and Matern32 kernel. Results from differnt methods are shown in table \ref{dim_red_res}. Consistently with previous results, Matern32 kernel continues to outperform the RBF kernel in all reduced data set. This means that indexed by the reduced feature space, our target function is still not smooth enough to be modeled by a GP with RBF kernel. The column $PCA99\%$ means we remain $99\%$ of the variance from the original data when performing PCA, which will reduce feature dimensions to $225$. The results from $PCA99\%$ is worse than those from AE with different sizes. This is because PCA only performs linear transformation from the original feature space to the reduced space. For the data set we use, the reduced space from PCA method does not contain as much information as those spanned from AEs. On the other hand, the non-linear activation function embedded in AEs is able to learn useful non-linear transformation from the original feature space that can be used to reconstruct the original information with little error. Results from GPR prediction shows that this non-linear transformation does not necessarily benefit from the increasing in the number of hidden nodes. This means for our data set, non-linear mapping into a smaller space is able to retrain more information than a larger one. For the AEs used, the one with 64 hidden nodes performs the best.
+	Feed the reduced data into our GPR model with RBF kernel and Matern32 kernel. Results from differnt methods are shown in table \ref{dim_red_res}. Consistently with previous results, Matern32 kernel continues to outperform the RBF kernel in all reduced data set. This means that indexed by the reduced feature space, our target function is still not smooth enough to be modeled by a GP with RBF kernel. The column $PCA99\%$ means the PCA remains $99\%$ of the variance from the original data when performing PCA, which will reduce feature dimensions to $225$. The results from $PCA99\%$ is worse than those from AE with different sizes. This is because PCA only performs linear transformation from the original feature space to the reduced space. For the data set we use, the reduced space from PCA method does not contain as much information as those spanned from AEs. On the other hand, the non-linear activation function embedded in AEs is able to learn useful non-linear transformation from the original feature space that can be used to reconstruct the original information with little error. Results from GPR prediction shows that this non-linear transformation does not necessarily benefit from the increasing in the number of hidden nodes. This means for the used data set, non-linear mapping into a smaller space is able to retrain more information than a larger one. For the AEs used, the one with 64 hidden nodes performs the best.
 	 
 	
 	\begin{sidewaystable}
@@ -1051,24 +1050,24 @@
 		\newpage
 		\section{Conclusion, Discussion and Further Study}
 		
-		In this section, we will wrap up what we have shown in previous sections and discuss other applications of GP for further study.
+		This section will wrap up what has been shown in previous sections and discuss other applications of GP for further study.
 		
-		In this paper, we start by briefly introducing pricing formulas for synthetic CDO -- a structured credit product. Then we propose an alternative way of replicating prices using a Bayesian learning model -- Gaussian Process Regression. In section 2, we have shown Gaussian process from a extended weight-space view and a more intuitive function-space view. For a zero mean Gaussian process as we have proposed in this paper, the behaviour of the GP is fully specified by its covariance matrix produced by kernel functions. There are numerous choices for kernels function. We have discussed three stationary kernel functions namely, Radial Basis Function(RBF) and Mat\'ern family kernel functions(Mat\'ern32 and Mat\'ern52), and one non-stationary kernel function -- Linear kernel function. We have also proposed three objective functions for parameter optimization -- namely, Maximum Likelihood(ML), Geisser's surrogate  Predictive Probability(GPP) and Geisser's Predictive mean square Error(GPE). In terms of computation complexity, ML objective functions requires less time for each iteration during training than other two objective functions. Numerical results are shown in Section \ref{subsec:num_res}. For our data set, Mat\'ern32 kernel function combined with GPP objective function gives the best predictive results.
+		This paper starts with brief introduction to pricing formulas for synthetic CDO -- a structured credit product. Then it proposes an alternative way of replicating prices using a Bayesian learning model -- Gaussian Process Regression. In section 2, it has shown Gaussian process from a extended weight-space view and a more intuitive function-space view. For a zero mean Gaussian process as proposed in this paper, the behaviour of the GP is fully specified by its covariance matrix produced by kernel functions. There are numerous choices for kernels function. Section 3 has discussed three stationary kernel functions namely, Radial Basis Function(RBF) and Mat\'ern family kernel functions(Mat\'ern32 and Mat\'ern52), and one non-stationary kernel function -- Linear kernel function. Section 3 has also proposed three objective functions for parameter optimization -- namely, Maximum Likelihood(ML), Geisser's surrogate  Predictive Probability(GPP) and Geisser's Predictive mean square Error(GPE). In terms of computation complexity, ML objective functions requires less time for each iteration during training than other two objective functions. Numerical results are shown in Section \ref{subsec:num_res}. For the used dataset, Mat\'ern32 kernel function combined with GPP objective function gives the best predictive results.
 		
 		The expensive computational complexity($\mathcal O(n^3)$) of GPR model during training process prohibits us from using a larger, more representative data set. To tackle this problem, we have used two dimension reduction techniques -- namely, Principal Component Analysis(PCA) and Autoencoder(AE) and compared the results on our dataset in Section \ref{sec:data_ana_res}. When applying the reduced data to our GPR model, results from AEs with different number of hidden nodes are consistently better than those from PCA. This is because the non-linear transformation performed by the activation function of AEs can produce a reduced space retaining more meaningful information from the original dataset than  the linear transformation in PCA.
 		
-		The autoencoder is a family of methods. We can construct complex hidden layers and nodes configuration as well as training loss function when dealing with a specific data set. For computational tractability, we have used one dense hidden layer for our implementation. However, one can build an autoencoder tailored for a specific data set for better performance. 
+		The autoencoder is a family of methods. One can construct complex hidden layers and nodes configuration as well as training loss function when dealing with a specific data set. For computational tractability, this paper has used one dense hidden layer for the implementation. However, one can build an autoencoder tailored for a specific data set for better performance. 
 		
-		We have shown in Section \ref{subsec:kernel_func}, sample paths of GPs governed by a Mat\'ern32 kernel function are rougher than those by a RBF kernel function. Prediction results also validate that Mat\'ern32 kernel performs better than RBF kernel on our dataset. However, when applied to a another dataset, we need to first analyse the distribution of features and the behaviour of the target function so that we can construct a suitable kernel function. It is also worth exploring that we can use different kernel functions on different dimensions of the feature space, based on their different distribution and the smoothness of target values with respect to that dimension.
+		It has been shown in Section \ref{subsec:kernel_func} that sample paths of GPs governed by a Mat\'ern32 kernel function are rougher than those by a RBF kernel function. Prediction results also validate that Mat\'ern32 kernel performs better than RBF kernel on our dataset. However, when applied to a another dataset, one needs to first analyse the distribution of features and the behaviour of the target function so that one can construct a suitable kernel function. It is also worth exploring that different kernel functions can be applied to different dimensions of the feature space, based on their different distribution and the smoothness of target values with respect to that dimension.
 		
-		Since differentiation is a linear operation, the derivative of a Gaussian process is another Gaussian process. Thus we can model the derivative of our target function as a GP and make inference from that. This can be applied to model underlyings of a structured or exotic products for hedging and risk management purposes. The covariance of partial derivative with function value and covariance between partial derivatives can be specified by the kernel function $k$ in the following form
+		Since differentiation is a linear operation, the derivative of a Gaussian process is another Gaussian process. Thus one can model the derivative of the target function as a GP and make inference from that. This can be applied to model underlyings of a structured or exotic products for hedging and risk management purposes. The covariance of partial derivative with function value and covariance between partial derivatives can be specified by the kernel function $k$ in the following form
 		\begin{equation}
 		\begin{split}
 		\text{cov}\left(f_i,\frac{\partial f_j}{\partial x_{d_j}}\right)&=\frac{\partial k(\vec x_i,\vec x_j)}{\partial x_{d_j}}\\
 		\text{cov}\left(\frac{\partial f_i}{\partial x_{d_i}},\frac{\partial f_j}{\partial x_{d_j}}\right)&=\frac{\partial^2 k(\vec x_i,\vec x_j)}{\partial x_{d_i}\partial x_{d_j}},
 		\end{split}
 		\end{equation}
-		where $d_j$ denotes the $j^{th}$ dimension in the feature space. If we are only interested in certain dimensions in the feature space, we just remove columns in the covariance matrix that are irrelevant. Inference and predictions when modelling with partial derivative are done similarly to the procedure described in this paper.
+		where $d_j$ denotes the $j^{th}$ dimension in the feature space. If certain dimensions in the feature space are of interest, one can just remove columns in the covariance matrix that are irrelevant. Inference and predictions when modelling with partial derivative are done similarly to the procedure described in this paper.
 		%deep Gaussian process
 		
 		%combine GPR and Kalman Filter, use GPR to produce measure and variance for hidden state estimation update in kalman filter
